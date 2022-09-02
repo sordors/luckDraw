@@ -23,7 +23,7 @@ export default {
 	},
 	methods: {
 		init() {
-			console.log("初始化")
+			console.log('初始化');
 			this.message = '等待点名';
 			this.rewardMessage = '等待抽奖';
 			this.title = '开始抽奖';
@@ -31,7 +31,7 @@ export default {
 			this.running = false;
 			let config = this.$db.get('config').value();
 			let result = this.$db.get('result.RollCallReward').value();
-			
+
 			let users = this.$db.get('users').value();
 			users.forEach(item => {
 				this.users.push(item.name);
@@ -114,13 +114,13 @@ export default {
 	flex-direction: column;
 	.back {
 		position: absolute;
-		top: 140px;
-		right: 10px;
+		top: 240px;
+		right: 15px;
 		height: 37px;
 		cursor: pointer;
 	}
 	.box {
-		width: 300px;
+		width: 100%;
 		height: 80px;
 		background: #67c23a;
 		font-size: 30px;
@@ -129,11 +129,14 @@ export default {
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.box-1 {
 		margin-top: 20px;
-		width: 300px;
+		width: 100%;
 		height: 80px;
 		background: #e6a23c;
 		font-size: 30px;
@@ -142,6 +145,9 @@ export default {
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

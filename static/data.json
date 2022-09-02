@@ -1,1 +1,19 @@
-{}
+{
+  "users": [],
+  "config": {
+    "refresh": 1,
+    "rollcall": 1,
+    "rollreward": 1,
+    "time": 30
+  },
+  "rewards": [],
+  "result": {
+    "RewardBox": [],
+    "RollCall": [],
+    "RollCallReward": [],
+    "RollReward": [],
+    "Gashapon": [],
+    "RollBall": []
+  },
+  "rank": []
+}

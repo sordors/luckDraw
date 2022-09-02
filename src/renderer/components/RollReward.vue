@@ -19,7 +19,7 @@ export default {
 	},
 	methods: {
 		init() {
-			console.log("init")
+			console.log('init');
 			this.message = '随机抽奖';
 			this.title = '开始抽奖';
 			this.rewards = [];
@@ -36,7 +36,7 @@ export default {
 					this.rewards.push(item.name);
 				}
 			});
-			
+
 			if (this.timer != null) {
 				clearInterval(this.timer);
 				this.timer = null;
@@ -87,13 +87,13 @@ export default {
 	flex-direction: column;
 	.back {
 		position: absolute;
-		top: 140px;
-		right: 10px;
+		top: 240px;
+		right: 15px;
 		height: 37px;
 		cursor: pointer;
 	}
 	.box {
-		width: 300px;
+		width: 100%;
 		height: 160px;
 		background: #67c23a;
 		font-size: 50px;
@@ -102,6 +102,9 @@ export default {
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

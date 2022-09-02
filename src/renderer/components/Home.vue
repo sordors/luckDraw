@@ -2,18 +2,27 @@
 	<div class="home">
 		<div class="draw">
 			<div class="header">
-				<el-button class="header-btn btn-4" type="text" @click="openNames()">抽奖名单</el-button>
-				<el-button class="header-btn btn-3" type="text" @click="openRewards()">奖项配置</el-button>
-				<el-button class="header-btn btn-2" type="text" @click="openResult()">抽奖结果</el-button>
-				<el-button class="header-btn btn-1" type="text" @click="openConfig()">系统配置</el-button>
+				<el-button class="header-btn btn-5" type="text" @click="openNames()">名单配置</el-button>
+				<el-button class="header-btn btn-4" type="text" @click="openRewards()">奖项配置</el-button>
+				<el-button class="header-btn btn-3" type="text" @click="openResult()">抽奖结果</el-button>
+				<el-button class="header-btn btn-2" type="text" @click="openConfig()">系统配置</el-button>
+				<el-button class="header-btn btn-1" type="text" @click="introduce = true">关于软件</el-button>
 			</div>
 
 			<div class="main-content" v-show="mode == 0">
-				<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">随机抽奖</el-button>
-				<el-button class="mode-btn pink" type="primary" @click="changeMode(2)">随机点名</el-button>
-				<el-button class="mode-btn green" type="primary" @click="changeMode(3)">点名抽奖</el-button>
-				<el-button class="mode-btn yellow" type="primary" @click="changeMode(4)">扭一下蛋</el-button>
-				<el-button class="mode-btn red" type="primary" @click="changeMode(5)">开个箱吧</el-button>
+				<div style="width: 608px;">
+					<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">随机抽奖</el-button>
+					<el-button class="mode-btn pink" type="primary" @click="changeMode(2)">随机点名</el-button>
+				</div>
+				<div style="width: 608px;">
+					<el-button class="mode-btn green" type="primary" @click="changeMode(3)">点名抽奖</el-button>
+					<el-button class="mode-btn yellow" type="primary" @click="changeMode(4)">扭一下蛋</el-button>
+				</div>
+				<div style="width: 608px;">
+					<el-button class="mode-btn red" type="primary" @click="changeMode(5)">开个箱吧</el-button>
+					<el-button class="mode-btn blue-2" type="primary" @click="changeMode(6)">炫酷抽奖</el-button>
+				</div>
+				<div style="width: 608px;"><el-button class="mode-btn orange" type="primary" @click="gotoSubject()">趣味竞赛</el-button></div>
 			</div>
 			<div class="main-content" v-show="mode != 0">
 				<RollReward ref="rollreward" v-if="mode == 1" @on-close="backHome" @on-run="runTask"></RollReward>
@@ -21,19 +30,31 @@
 				<RollCallReward ref="rollcallreward" v-if="mode == 3" @on-close="backHome" @on-run="runTask"></RollCallReward>
 				<Gashapon ref="gashapon" v-if="mode == 4" @on-close="backHome" @on-run="runTask"></Gashapon>
 				<RewardBox ref="rewardbox" v-if="mode == 5" @on-close="backHome" @on-run="runTask"></RewardBox>
+				<RollBall ref="rewardball" v-if="mode == 6" @on-close="backHome" @on-run="runTask"></RollBall>
 			</div>
 			<img src="../assets/voice_close.png" class="voice" @click="voiceChage(true)" v-if="!voice" />
 			<img src="../assets/voice_open.png" class="voice" @click="voiceChage(false)" v-if="voice" />
 		</div>
-		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler">
+		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none;">
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签
 		</audio>
-		<!--<span class="copy-right">版权所有：Sordors@2021</span>-->
+		<span class="copy-right">软件作者：Sordors</span>
 		<Config ref="config" @on-reset="reset"></Config>
 		<Names ref="names"></Names>
 		<Rewards ref="rewards"></Rewards>
 		<Result ref="result" @on-reset="reset"></Result>
+		<el-dialog :visible.sync="introduce" width="600px" title="关于软件" center>
+			<div class="introduce">
+				<p>以下纯属自言自语，看到最好看不到你可能是瞎了：</p>
+				<p>1. 本软件由作者Sordors制作，一般人找不到他。</p>
+				<p>2. 奉劝各位耗子尾汁，考个好的成绩，时代发展太快，不读书是不行的！</p>
+				<p>3. 若无天灾人祸，你们应该活得比我们久，会的会比我们多，学的会比我们快，一粒尘可填海，一根草亦可斩尽日月星辰，即使渺小，也可优秀！</p>
+				<p>4. 每个人都有属于自己的一片森林，也许我们从来不曾去过，但它一直在那里，总会在那里。迷失的人迷失了，相逢的人会再相逢。——村上春树</p>
+				<p>5. 最后古语曰：老师也是人，请爱她们，关心她们，记住她们。(我还没找到出处就是了)</p>
+				<p style="text-align: right;">此致，敬礼并圆润的转圈圈离开</p>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -47,16 +68,18 @@ import RollReward from './RollReward';
 import RollCallReward from './RollCallReward';
 import Gashapon from './Gashapon';
 import RewardBox from './RewardBox';
+import RollBall from './RollBall';
 import bgaudio from '@/assets/before.mp3';
 import beginaudio from '@/assets/start.mp3';
 
 export default {
-	components: { Config, Names, Rewards, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result },
+	components: { Config, Names, Rewards, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
 	data() {
 		return {
 			mode: 0,
 			voice: false,
-			audioSrc: bgaudio
+			audioSrc: bgaudio,
+			introduce: false
 		};
 	},
 	mounted() {
@@ -68,7 +91,8 @@ export default {
 					RollCall: [],
 					RollCallReward: [],
 					RollReward: [],
-					Gashapon: []
+					Gashapon: [],
+					RollBall: []
 				})
 				.write();
 		}
@@ -115,6 +139,12 @@ export default {
 		openResult() {
 			this.$refs.result.open();
 		},
+		openSubject() {
+			this.$refs.subjectDb.open();
+		},
+		gotoSubject() {
+			this.$router.push({ path: 'subject' });
+		},
 		changeMode(mode) {
 			this.mode = mode;
 			this.$nextTick(() => {
@@ -133,21 +163,30 @@ export default {
 				if (mode == 5) {
 					this.$refs.rewardbox.init();
 				}
+				if (mode == 6) {
+					this.$refs.rewardball.init();
+				}
 			});
 		},
 		runTask(state) {
 			if (state) {
-				this.audioSrc = beginaudio;
-				this.loadAudio();
+				if (this.audioSrc != beginaudio) {
+					this.audioSrc = beginaudio;
+					this.loadAudio();
+				}
 			} else {
-				this.audioSrc = bgaudio;
-				this.loadAudio();
+				if (this.audioSrc != bgaudio) {
+					this.audioSrc = bgaudio;
+					this.loadAudio();
+				}
 			}
 		},
 		backHome() {
 			this.mode = 0;
-			this.audioSrc = bgaudio;
-			this.loadAudio();
+			if (this.audioSrc != bgaudio) {
+				this.audioSrc = bgaudio;
+				this.loadAudio();
+			}
 		},
 		reset() {
 			this.$nextTick(() => {
@@ -170,6 +209,10 @@ export default {
 				if (this.mode == 5) {
 					this.$refs.rewardbox.init();
 				}
+
+				if (mode == 6) {
+					this.$refs.rewardball.init();
+				}
 			});
 		}
 	}
@@ -183,8 +226,8 @@ export default {
 }
 .voice {
 	position: absolute;
-	top: 80px;
-	right: 10px;
+	top: 180px;
+	right: 15px;
 	height: 40px;
 	cursor: pointer;
 }
@@ -210,13 +253,16 @@ export default {
 		&.btn-4 {
 			right: 260px;
 		}
+		&.btn-5 {
+			right: 340px;
+		}
 	}
 }
 
 .draw {
 	height: 100%;
 	position: relative;
-	background-image: url('../assets/bg.jpg');
+	background-image: url('../assets/bg5.jpg');
 	background-size: 100% 100%;
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -240,7 +286,7 @@ export default {
 			margin-top: 20px;
 			margin-left: 0px;
 			width: 300px;
-			height: 70px;
+			height: 100px;
 		}
 		.red {
 			background: #f44336;
@@ -264,6 +310,18 @@ export default {
 			background: #fdd865;
 			border-color: #fdd865;
 		}
+
+		.orange {
+			background: #fe9500;
+			border-color: #fe9500;
+
+			width: 100%;
+		}
+
+		.blue-2 {
+			background: #2196f3;
+			border-color: #2196f3;
+		}
 	}
 }
 
@@ -280,5 +338,13 @@ export default {
 	padding-right: 5px;
 	height: 20px;
 	line-height: 20px;
+}
+
+.introduce {
+	height: 350px;
+	font-size: 16px;
+	line-height: 30px;
+	color: #000;
+	font-weight: bold;
 }
 </style>

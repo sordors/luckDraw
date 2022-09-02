@@ -1,6 +1,6 @@
 {
   "name": "luck",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Sordors",
   "description": "An electron-vue project",
   "license": null,
@@ -19,7 +19,7 @@
   "build": {
     "productName": "课堂小游戏",
     "appId": "com.wss.luck",
-	"asar": false,
+    "asar": false,
     "directories": {
       "output": "build"
     },
@@ -42,23 +42,23 @@
       ]
     },
     "mac": {
-    	"target": [
-    		"dmg",
-    		"zip"
-    	]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "win": {
-    	"target": [
-    		"nsis",
-    		"zip"
-    	],
-    	"artifactName": "课堂小游戏_${version}.${ext}",
-    	"icon": "./app.ico"
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "artifactName": "课堂小游戏_${version}.${ext}",
+      "icon": "./app.ico"
     },
     "nsis": {
-    	"oneClick": false,
-    	"allowToChangeInstallationDirectory": true,
-    	"perMachine": true
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": true
     }
   },
   "dependencies": {
@@ -69,7 +69,8 @@
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "xlsx": "^0.17.3"
   },
   "devDependencies": {
     "ajv": "^6.5.0",

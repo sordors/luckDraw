@@ -19,7 +19,7 @@ export default {
 	},
 	methods: {
 		init() {
-			console.log("初始化")
+			console.log('初始化');
 			this.message = '随机点名';
 			this.title = '开始点名';
 			this.users = [];
@@ -69,7 +69,6 @@ export default {
 						.get('result.RollCall')
 						.push(_this.message)
 						.write();
-
 					this.$emit('on-run', this.running);
 				}
 			} else {
@@ -88,13 +87,13 @@ export default {
 	flex-direction: column;
 	.back {
 		position: absolute;
-		top: 140px;
-		right: 10px;
+		top: 240px;
+		right: 15px;
 		height: 37px;
 		cursor: pointer;
 	}
 	.box {
-		width: 300px;
+		width: 100%;
 		height: 160px;
 		background: #e6a23c;
 		font-size: 50px;
@@ -103,6 +102,9 @@ export default {
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

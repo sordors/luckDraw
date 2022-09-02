@@ -8,6 +8,7 @@ import path from 'path'
 import Element from 'element-ui';
 import '@/assets/style/index.scss';
 import 'element-ui/lib/theme-chalk/index.css';
+import '@/assets/lib/tagcanvas.js';
 
 Vue.use(Element);
 const low = require('lowdb')
@@ -16,9 +17,14 @@ const FileSync = require('lowdb/adapters/FileSync')
 const adapter = new FileSync(path.join(__static, '/data.json'))
 const db = low(adapter)
 
+const subjectAdapter = new FileSync(path.join(__static, '/subject.json'))
+const subjectDb = low(subjectAdapter)
+
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.prototype.$http = axios
 Vue.prototype.$db = db
+Vue.prototype.$subjectDb = subjectDb
 Vue.config.productionTip = false
 
 db.defaults({
@@ -26,16 +32,23 @@ db.defaults({
 	config: {
 		"refresh": 1,
 		"rollcall": 1,
-		"rollreward": 1
+		"rollreward": 1,
+		"time": 30
 	},
-	rewards: {
-		"RewardBox":[],
-		"RollCall":[],
-		"RollCallReward":[],
-		"RollReward":[],
-		"Gashapon":[]
+	rewards: [],
+	result: {
+		"RewardBox": [],
+		"RollCall": [],
+		"RollCallReward": [],
+		"RollReward": [],
+		"Gashapon": [],
+		"RollBall": []
 	},
-	result: []
+	rank: []
+}).write()
+
+subjectDb.defaults({
+	data: []
 }).write()
 
 /* eslint-disable no-new */

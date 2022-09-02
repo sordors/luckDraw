@@ -1,7 +1,7 @@
 <template>
 	<el-dialog :visible.sync="visible" :append-to-body="true" width="600px" class="c-LotteryConfig" :close-on-click-modal="false">
 		<div class="c-LotteryConfigtitle" slot="title">
-			<span :style="{ fontSize: '16px', marginRight: '20px' }">抽奖配置</span>
+			<span :style="{ fontSize: '16px', marginRight: '20px' }">系统配置</span>
 			<el-button size="mini" type="primary" @click="onSubmit">保存配置</el-button>
 			<el-button size="mini" @click="close()">取消</el-button>
 		</div>
@@ -19,6 +19,7 @@
 					<el-radio v-model="config.rollreward" :label="1">是</el-radio>
 					<el-radio v-model="config.rollreward" :label="2">否</el-radio>
 				</el-form-item>
+				<el-form-item label="答题时间(秒)"><el-input type="number" v-model="config.time" :min="1" :step="1"></el-input></el-form-item>
 			</el-form>
 		</div>
 	</el-dialog>
@@ -31,7 +32,8 @@ export default {
 			config: {
 				refresh: 1,
 				rollcall: 1,
-				rollreward: 1
+				rollreward: 1,
+				time: 30
 			}
 		};
 	},

@@ -31,7 +31,8 @@ export default {
 				RewardBox: '开个箱吧',
 				RollCallReward: '点名抽奖',
 				RollCall: '随机点名',
-				RollReward: '随机抽奖'
+				RollReward: '随机抽奖',
+				RollBall: '炫酷抽奖'
 			}
 		};
 	},
@@ -50,7 +51,8 @@ export default {
 					RollCall: [],
 					RollCallReward: [],
 					RollReward: [],
-					Gashapon: []
+					Gashapon: [],
+					RollBall: []
 				})
 				.write();
 
@@ -107,24 +109,13 @@ export default {
 		font-weight: bold;
 		border-radius: 4px;
 		border: 1px solid #ccc;
-		color: #f7b133;
-		background-color: #a23a3a;
+		color: #fff;
+		background-color: #409eff;
+		border-color: #409eff;
 		margin-left: 5px;
 		margin-bottom: 5px;
 		position: relative;
 		cursor: pointer;
-		&:hover {
-			&::before {
-				content: '删除';
-				width: 100%;
-				height: 100%;
-				background-color: #ccc;
-				position: absolute;
-				left: 0;
-				top: 0;
-				color: red;
-			}
-		}
 	}
 }
 </style>
