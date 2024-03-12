@@ -53,7 +53,7 @@
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签
 		</audio>
-		<span class="copy-right">软件作者：Sordors，版权所有：温女士@2021-永远</span>
+		<span class="copy-right">软件作者：Sordors</span>
 	</div>
 </template>
 

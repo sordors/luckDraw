@@ -24,7 +24,7 @@ export default {
 	},
 	methods: {
 		tableRowClassName({ row, rowIndex }) {
-			console.log(123)
+			console.log(123);
 			if (rowIndex === 0) {
 				return 'success-row';
 			} else if (rowIndex === 1) {

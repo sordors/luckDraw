@@ -2,7 +2,7 @@
 	<div class="home">
 		<div class="draw">
 			<div class="header">
-				<el-button class="header-btn btn-5" type="text" @click="openNames()">名单配置</el-button>
+				<el-button class="header-btn btn-5" type="text" @click="openUsers()">用户配置</el-button>
 				<el-button class="header-btn btn-4" type="text" @click="openRewards()">奖项配置</el-button>
 				<el-button class="header-btn btn-3" type="text" @click="openResult()">抽奖结果</el-button>
 				<el-button class="header-btn btn-2" type="text" @click="openConfig()">系统配置</el-button>
@@ -41,7 +41,7 @@
 		</audio>
 		<span class="copy-right">软件作者：Sordors</span>
 		<Config ref="config" @on-reset="reset"></Config>
-		<Names ref="names"></Names>
+		<UserList ref="users"></UserList>
 		<Rewards ref="rewards"></Rewards>
 		<Result ref="result" @on-reset="reset"></Result>
 		<el-dialog :visible.sync="introduce" width="600px" title="关于软件" center>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import Names from './Names';
+import UserList from './UserList';
 import Config from './Config';
 import Rewards from './Rewards';
 import Result from './Result';
@@ -73,7 +73,7 @@ import bgaudio from '@/assets/before.mp3';
 import beginaudio from '@/assets/start.mp3';
 
 export default {
-	components: { Config, Names, Rewards, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
+	components: { Config, UserList, Rewards, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
 	data() {
 		return {
 			mode: 0,
@@ -130,8 +130,8 @@ export default {
 		openConfig() {
 			this.$refs.config.open();
 		},
-		openNames() {
-			this.$refs.names.open();
+		openUsers() {
+			this.$refs.users.open();
 		},
 		openRewards() {
 			this.$refs.rewards.open();
