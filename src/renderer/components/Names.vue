@@ -4,10 +4,10 @@
 			<el-input
 				type="textarea"
 				:rows="10"
-				placeholder="请输入对应的名字(可直接从excel复制)，一行一个。如：
-张三
-李四
-王五
+				placeholder="请输入对应的用户(可直接从excel复制)，一行一个,格式:名字+空格+积分(积分不填默认为0)。如：
+张三 2
+李四 3
+王五 4
 								"
 				v-model="listStr"
 			></el-input>
@@ -32,11 +32,11 @@ export default {
 			this.showImport = true;
 			let users = this.$db.get('users').value();
 			this.listStr = '';
-			users.forEach(item => {
+			users.forEach((item) => {
 				if (this.listStr.length) {
-					this.listStr = this.listStr + '\n' + item.name;
+					this.listStr = this.listStr + '\n' + item.name + ' ' + item.integral;
 				} else {
-					this.listStr = item.name;
+					this.listStr = item.name + ' ' + item.integral;
 				}
 			});
 		},
@@ -53,9 +53,15 @@ export default {
 			if (rows && rows.length > 0) {
 				rows.forEach((item, index) => {
 					if (item.length) {
+						item = item.replace(/\s+/g, ' ');
+						let arr = item.split(" ");
+						let name = arr[0];
+						let integral = arr.length >= 2 ? parseInt(arr[1]) : 0;
+						integral = isNaN(integral) ? 0 : integral;
 						list.push({
 							key: index + 1,
-							name: item
+							name: name,
+							integral: integral
 						});
 					}
 				});
@@ -67,16 +73,14 @@ export default {
 				message: '保存成功',
 				type: 'success'
 			});
+			this.$emit('on-success',{});
 			this.showImport = false;
-			this.$nextTick(() => {
-				this.$emit('resetConfig');
-			});
 		}
 	}
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped> 
 .import-dialog {
 	.footer {
 		height: 50px;

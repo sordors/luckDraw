@@ -42,7 +42,7 @@
 		<span class="copy-right">软件作者：Sordors</span>
 		<Config ref="config" @on-reset="reset"></Config>
 		<UserList ref="users"></UserList>
-		<Rewards ref="rewards"></Rewards>
+		<RewardList ref="rewards"></RewardList>
 		<Result ref="result" @on-reset="reset"></Result>
 		<el-dialog :visible.sync="introduce" width="600px" title="关于软件" center>
 			<div class="introduce">
@@ -61,7 +61,7 @@
 <script>
 import UserList from './UserList';
 import Config from './Config';
-import Rewards from './Rewards';
+import RewardList from './RewardList';
 import Result from './Result';
 import RollCall from './RollCall';
 import RollReward from './RollReward';
@@ -73,7 +73,7 @@ import bgaudio from '@/assets/before.mp3';
 import beginaudio from '@/assets/start.mp3';
 
 export default {
-	components: { Config, UserList, Rewards, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
+	components: { Config, UserList, RewardList, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
 	data() {
 		return {
 			mode: 0,
@@ -219,7 +219,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .home {
 	height: 100%;
 	width: 100%;
@@ -240,7 +240,8 @@ export default {
 		top: 17px;
 		padding: 0;
 		z-index: 99;
-
+		color: #000;
+		font-weight: bold;
 		&.btn-1 {
 			right: 20px;
 		}
@@ -262,7 +263,7 @@ export default {
 .draw {
 	height: 100%;
 	position: relative;
-	background-image: url('../assets/bg5.jpg');
+	background-image: url('../assets/bg.jpg');
 	background-size: 100% 100%;
 	background-position: center center;
 	background-repeat: no-repeat;

@@ -45,7 +45,7 @@ export default {
 	}
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .el-table .warning-row {
 	background: #D9DCE4;
 }
@@ -58,10 +58,11 @@ export default {
 .rank {
 	.el-dialog__body {
 		height: 500px;
+		overflow: hidden;
 		.container {
 			height: 100%;
 			overflow-y: auto;
-			padding: 0 10px;
+			padding: 10px;
 		}
 	}
 }

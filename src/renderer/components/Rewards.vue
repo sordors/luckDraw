@@ -4,10 +4,10 @@
 			<el-input
 				type="textarea"
 				:rows="10"
-				placeholder="请输入对应的奖项(可直接从excel复制)，一行一个。如：
-一等奖
-二等奖
-三等奖
+				placeholder="请输入对应的奖项(可直接从excel复制)，一行一个,格式:奖品+空格+数量(数量不限制建议设置99999,默认为0)如：
+一等奖 10
+二等奖 20
+三等奖 99999
 								"
 				v-model="listStr"
 			></el-input>
@@ -32,11 +32,11 @@ export default {
 			this.showImport = true;
 			let rewards = this.$db.get('rewards').value();
 			this.listStr = '';
-			rewards.forEach(item => {
+			rewards.forEach((item) => {
 				if (this.listStr.length) {
-					this.listStr = this.listStr + '\n' + item.name;
+					this.listStr = this.listStr + '\n' + item.name + ' ' + item.num;
 				} else {
-					this.listStr = item.name;
+					this.listStr = item.name + ' ' + item.num;
 				}
 			});
 		},
@@ -53,9 +53,15 @@ export default {
 			if (rows && rows.length > 0) {
 				rows.forEach((item, index) => {
 					if (item.length) {
+						item = item.replace(/\s+/g, ' ');
+						let arr = item.split(' ');
+						let name = arr[0];
+						let num = arr.length >= 2 ? parseInt(arr[1]) : 0;
+						num = isNaN(num) ? 0 : num;
 						list.push({
 							key: index + 1,
-							name: item
+							name: name,
+							num: num
 						});
 					}
 				});
@@ -69,15 +75,13 @@ export default {
 				type: 'success'
 			});
 			this.showImport = false;
-			this.$nextTick(() => {
-				this.$emit('resetConfig');
-			});
+			this.$emit('on-success',{});
 		}
 	}
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .import-dialog {
 	.footer {
 		height: 50px;

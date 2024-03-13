@@ -64,7 +64,7 @@ export default {
 			this.createCanvas();
 			const { speed } = this;
 			window.TagCanvas.Start('rootcanvas', 'tags', {
-				textColour: '#ff1a4b',
+				textColour: '#2997F7',
 				initial: speed(),
 				dragControl: 1,
 				decel: 0.5,

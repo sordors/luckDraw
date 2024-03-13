@@ -60,7 +60,7 @@ export default {
 	}
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .c-LotteryConfig {
 	.el-dialog__body {
 		height: 340px;
