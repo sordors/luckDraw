@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<el-dialog title="选择挑战者" center :append-to-body="true" :visible.sync="showImport" class="challenge-dialog" width="600px" :close-on-click-modal="false">
-			<el-select v-model="user" placeholder="请选择挑战者" style="width: 100%;">
-				<el-option :label="item.name" :value="item.name" v-for="(item, index) in users"></el-option>
+			<el-select v-model="user" placeholder="请选择挑战者" style="width: 100%">
+				<el-option :label="item.name" :value="item.key" v-for="(item, index) in users" :key="index"></el-option>
 			</el-select>
 			<div class="footer">
 				<el-button size="mini" type="primary" @click="sumbit">确定</el-button>
@@ -31,9 +31,19 @@ export default {
 		},
 		sumbit() {
 			this.showImport = false;
-			this.$nextTick(() => {
-				this.$emit('on-success', this.user);
+			let user = null;
+			this.users.forEach((item) => {
+				if (item.key == this.user) {
+					user = item;
+				}
 			});
+			console.log(user);
+			this.$store.commit('ADD_USER', user);
+			
+			this.$nextTick(() => {
+				this.$emit('on-success', user);
+			});
+			
 		}
 	}
 };

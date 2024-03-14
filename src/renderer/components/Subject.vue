@@ -1,11 +1,18 @@
 <template>
 	<div class="main">
 		<div class="subject-header">
-			<div class="rank">{{ first ? '当前NO.1 ' + first : '' }}</div>
-			<el-button class="header-btn btn-4" type="text" @click="openTop()">TOP排行榜</el-button>
-			<el-button class="header-btn btn-3" type="text" @click="openNames()">名单配置</el-button>
-			<el-button class="header-btn btn-2" type="text" @click="openSubject()">题库配置</el-button>
-			<el-button class="header-btn btn-1" type="text" @click="openConfig()">系统配置</el-button>
+			<div class="header-left">
+				<el-button class="user-btn" type="text" @click="chooseUser()">
+					{{ user ? '姓名：' + user.name + ',积分：' + user.integral + '，点击重选' : '选择用户' }}
+				</el-button>
+			</div>
+			<div class="header-right">
+				<div class="rank">{{ first ? '当前NO.1 ' + first : '' }}</div>
+				<el-button class="header-btn btn-4" type="text" @click="openTop()">TOP排行榜</el-button>
+				<el-button class="header-btn btn-3" type="text" @click="openNames()">名单配置</el-button>
+				<el-button class="header-btn btn-2" type="text" @click="openSubject()">题库配置</el-button>
+				<el-button class="header-btn btn-1" type="text" @click="openConfig()">系统配置</el-button>
+			</div>
 		</div>
 		<img src="../assets/voice_close.png" class="voice" @click="voiceChage(true)" v-if="!voice" />
 		<img src="../assets/voice_open.png" class="voice" @click="voiceChage(false)" v-if="voice" />
@@ -16,11 +23,11 @@
 				<button class="start" @click="start">点击开始</button>
 			</div>
 			<div class="game-box" v-show="show">
-				<div class="challenge">当前挑战者：{{ user }}</div>
+				<div class="challenge">当前挑战者：{{ user.name }}</div>
 				<div class="tip">
 					<div class="fl">
 						<p>计时：{{ count }}秒</p>
-						<p>积分：{{ integral }}分</p>
+						<p>成绩：{{ integral }}分</p>
 					</div>
 					<div class="fr">
 						<p>答对：{{ success }}题</p>
@@ -28,7 +35,7 @@
 					</div>
 				</div>
 				<div class="subject">
-					<span style="color: #FFFFFF;">{{ number }}.</span>
+					<span style="color: #ffffff">{{ number }}.</span>
 					{{ subject.title }}
 				</div>
 				<div class="choose-list">
@@ -49,7 +56,7 @@
 		<SubjectDb ref="subjectDb" @on-reset="resetSubject"></SubjectDb>
 		<Challenge ref="challenge" @on-success="showTime"></Challenge>
 		<Rank ref="rank"></Rank>
-		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none;">
+		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none">
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签
 		</audio>
@@ -66,6 +73,11 @@ import Rank from './Rank';
 import bgaudio from '@/assets/before.mp3';
 export default {
 	components: { Names, Config, SubjectDb, Challenge, Rank },
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
+	},
 	data() {
 		return {
 			show: false,
@@ -86,7 +98,6 @@ export default {
 			number: 0,
 			choose: '',
 			result: '',
-			user: '',
 			first: '',
 			voice: false,
 			audioSrc: bgaudio
@@ -97,10 +108,7 @@ export default {
 		this.origin = this.$subjectDb.get('data').value();
 		this.data = [].concat(this.origin);
 		this.count = this.config.time || 30;
-		let ranks = this.$db
-			.get('rank')
-			.sortBy('ranking')
-			.value();
+		let ranks = this.$db.get('rank').sortBy('ranking').value();
 		if (ranks && ranks.length > 0) {
 			this.first = ranks[0].name || '';
 		}
@@ -153,7 +161,6 @@ export default {
 			this.number = 0;
 			this.choose = '';
 			this.result = '';
-			this.user = '';
 			this.integral = 0;
 			this.success = 0;
 			this.error = 0;
@@ -176,15 +183,21 @@ export default {
 		start() {
 			if (!this.data.length) {
 				this.$message.error('请先录入题库');
-			} else {
+			}
+
+			if (!this.user) {
 				this.$refs.challenge.open();
+				this.$message.error('请先选择用户');
+			} else {
+				this.show = true;
+				this.countDown();
+				this.getSubject();
 			}
 		},
 		showTime(user) {
-			if (!user.length) {
-				this.$message.error('请先选择挑战者');
+			if (!this.user) {
+				this.$message.error('请先选择用户');
 			} else {
-				this.user = user;
 				this.show = true;
 				this.countDown();
 				this.getSubject();
@@ -208,25 +221,22 @@ export default {
 			this.data = this.$subjectDb.get('data').value();
 		},
 		getRank() {
-			let ranks = this.$db
-				.get('rank')
-				.sortBy('ranking')
-				.value();
+			let ranks = this.$db.get('rank').sortBy('ranking').value();
 			if (!ranks || ranks.length <= 0) {
 				let data = [
 					{
-						name: this.user,
+						name: this.user.name,
 						store: this.integral,
 						ranking: 1
 					}
 				];
-				this.first = this.user;
+				this.first = this.user.name;
 				this.$db.set('rank', data).write();
 				return 1;
 			} else {
 				let prescore = this.integral;
 				let ranking = 1;
-				ranks.forEach(item => {
+				ranks.forEach((item) => {
 					if (item.store >= prescore) {
 						ranking++;
 					}
@@ -237,12 +247,12 @@ export default {
 				}
 
 				ranks.push({
-					name: this.user,
+					name: this.user.name,
 					store: this.integral,
 					ranking: ranking
 				});
 
-				let newRanks = ranks.sort(function(a, b) {
+				let newRanks = ranks.sort(function (a, b) {
 					return b.store - a.store;
 				});
 
@@ -273,7 +283,7 @@ export default {
 				} else {
 					let integral = _this.integral;
 					let rank = _this.getRank();
-					let user = _this.user;
+					let user = _this.user.name;
 					_this.init();
 
 					this.$alert('答题结束, 挑战者' + user + '获得积分' + integral + ',排名第' + rank + '位?', '温馨提示');
@@ -288,7 +298,7 @@ export default {
 .main {
 	height: 100%;
 	width: 100%;
-	display: inline-flex;
+	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
@@ -308,35 +318,50 @@ export default {
 	}
 }
 .subject-header {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
 	height: 50px;
 	line-height: 50px;
-	.rank {
-		position: absolute;
-		left: 0;
-		right: 0;
-		color: #f56c6c;
-		font-size: 30px;
-		text-align: center;
+	display: flex;
+	width: 100%;
+	padding: 0 20px;
+	.header-right {
+		justify-content: center;
+		align-items: center;
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
+		.header-btn {
+			padding: 0;
+			z-index: 99;
+			color: #000;
+			font-weight: bold;
+			width: 80px;
+			font-size: 16px;
+		}
+		.rank {
+			color: #ff0000;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+			font-size: 16px;
+			margin-right: 10px;
+		}
 	}
-	.header-btn {
-		position: absolute;
-		top: 17px;
-		padding: 0;
-		z-index: 99;
-		&.btn-1 {
-			right: 20px;
-		}
-		&.btn-2 {
-			right: 100px;
-		}
-		&.btn-3 {
-			right: 180px;
-		}
-		&.btn-4 {
-			right: 260px;
-		}
-		&.btn-5 {
-			right: 340px;
+	.header-left {
+		width: 200px;
+		display: flex;
+		.user-btn {
+			padding: 0;
+			color: #f10000;
+			font-weight: bold;
+			cursor: pointer;
+			z-index: 99;
+			width: 200px;
+			text-align: left;
+			font-size: 16px;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <template>
 	<el-dialog title="排行榜" center :visible.sync="visible" :append-to-body="true" width="600px" class="rank"  :close-on-click-modal="false">
 		<div class="container">
-			<el-table :data="result" style="width: 100%" :row-class-name="tableRowClassName">
+			<el-table :data="result" style="width: 100%" :row-class-name="tableRowClassName" ref="atable">
 				<el-table-column label="排名" width="180">
 					<template slot-scope="scope">
 						<span>NO.{{ scope.row.ranking }}</span>
@@ -37,6 +37,10 @@ export default {
 		open() {
 			this.visible = true;
 			this.result = this.$db.get('rank').value();
+			this.$nextTick(() => {
+			  this.$refs.atable.doLayout();
+			});
+			console.log(this.result);
 		},
 		close() {
 			this.visible = false;

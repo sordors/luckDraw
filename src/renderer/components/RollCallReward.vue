@@ -18,8 +18,14 @@ export default {
 			rewards: [],
 			running: false,
 			timer: null,
-			rewardTimer: null
+			rewardTimer: null,
+			config: null
 		};
+	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
 	},
 	methods: {
 		init() {
@@ -27,26 +33,15 @@ export default {
 			this.message = '等待点名';
 			this.rewardMessage = '等待抽奖';
 			this.title = '开始抽奖';
-			this.rewards = [];
 			this.running = false;
-			let config = this.$db.get('config').value();
-			let result = this.$db.get('result.RollCallReward').value();
-
+			this.config = this.$db.get('config').value();
+		
 			let users = this.$db.get('users').value();
-			users.forEach(item => {
+			users.forEach((item) => {
 				this.users.push(item.name);
 			});
 
-			let rewards = this.$db.get('rewards').value();
-			rewards.forEach(item => {
-				if (config.rollreward == 2 && result.length > 0) {
-					if (userResult.indexOf(item.name) != -1) {
-						this.rewards.push(item.name);
-					}
-				} else {
-					this.rewards.push(item.name);
-				}
-			});
+			this.initData();
 
 			if (this.timer != null) {
 				clearInterval(this.timer);
@@ -57,6 +52,15 @@ export default {
 				clearInterval(this.rewardTimer);
 				this.rewardTimer = null;
 			}
+		},
+		initData(){
+			this.rewards = [];
+			let rewards = this.$db.get('rewards').value();
+			rewards.forEach((item) => {
+				if (item.num > 0) {
+					this.rewards.push(item);
+				}
+			});
 		},
 		close() {
 			this.$nextTick(() => {
@@ -77,7 +81,7 @@ export default {
 
 					this.rewardTimer = setInterval(() => {
 						let rewardNum = Math.floor(Math.random() * _this.rewards.length);
-						_this.rewardMessage = _this.rewards[rewardNum];
+						_this.rewardMessage = _this.rewards[rewardNum].name;
 					}, 30);
 				} else {
 					clearInterval(this.timer);
@@ -86,13 +90,35 @@ export default {
 					_this.message = _this.users[number];
 
 					clearInterval(this.rewardTimer);
-					let rewardNum = Math.floor(Math.random() * _this.rewards.length);
-					_this.rewardMessage = _this.rewards[rewardNum];
 
-					this.$db
-						.get('result.RollCallReward')
-						.push(_this.rewardMessage)
-						.write();
+					let rate = this.config.roll_call_rate ? this.config.roll_call_rate : 100;
+					rate = parseInt(rate);
+					rate = isNaN(rate) ? 100 : rate;
+					const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+					if (randomNumber <= rate) {
+						if (!_this.rewards.length) {
+							_this.rewardMessage = '未抽中奖品';
+						} else {
+							let rewardNum = Math.floor(Math.random() * _this.rewards.length);
+							let currentRewards = _this.rewards[number];
+							_this.rewardMessage = currentRewards.name;
+
+							this.$db
+								.get('result.RollCallReward')
+								.push(_this.message + '抽中' + _this.rewardMessage)
+								.write();
+							_this.$db
+								.get('rewards')
+								.find({ key: currentRewards.key })
+								.assign({ num: currentRewards.num - 1 })
+								.write();
+
+							_this.initData();
+						}
+					} else {
+						_this.rewardMessage = '未抽中奖品';
+					}
 
 					_this.title = '开始抽奖';
 					_this.running = false;
@@ -120,39 +146,41 @@ export default {
 		cursor: pointer;
 	}
 	.box {
-		width: 100%;
-		height: 80px;
+		height: 100px;
 		background: #67c23a;
 		font-size: 30px;
 		text-align: center;
-		line-height: 80px;
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: 400px;
+		overflow: hidden;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 80px;
 	}
 
 	.box-1 {
 		margin-top: 20px;
-		width: 100%;
-		height: 80px;
+		height: 100px;
 		background: #e6a23c;
 		font-size: 30px;
 		text-align: center;
-		line-height: 80px;
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: 400px;
+		overflow: hidden;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		line-height: 80px;
 	}
 
 	.running-btn {
 		margin-top: 20px;
-		width: 320px;
+		width: 400px;
 	}
 }
 </style>

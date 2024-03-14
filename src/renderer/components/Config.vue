@@ -1,9 +1,7 @@
 <template>
-	<el-dialog :visible.sync="visible" :append-to-body="true" width="600px" class="c-LotteryConfig" :close-on-click-modal="false">
+	<el-dialog :visible.sync="visible" :append-to-body="true" width="800px" class="c-LotteryConfig" :close-on-click-modal="false">
 		<div class="c-LotteryConfigtitle" slot="title">
 			<span :style="{ fontSize: '16px', marginRight: '20px' }">系统配置</span>
-			<el-button size="mini" type="primary" @click="onSubmit">保存配置</el-button>
-			<el-button size="mini" @click="close()">取消</el-button>
 		</div>
 		<div class="container">
 			<el-form ref="form" :model="config" size="mini">
@@ -15,12 +13,22 @@
 					<el-radio v-model="config.rollcall" :label="1">是</el-radio>
 					<el-radio v-model="config.rollcall" :label="2">否</el-radio>
 				</el-form-item>
-				<el-form-item label="是否允许重复抽奖">
-					<el-radio v-model="config.rollreward" :label="1">是</el-radio>
-					<el-radio v-model="config.rollreward" :label="2">否</el-radio>
-				</el-form-item>
+				
 				<el-form-item label="答题时间(秒)"><el-input type="number" v-model="config.time" :min="1" :step="1"></el-input></el-form-item>
+				<el-form-item label="随机抽奖(扣除积分)"><el-input type="number" v-model="config.roll_integral" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="随机抽奖(中奖率)"><el-input type="number" v-model="config.roll_rate" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="随机点名抽奖(中奖率,PS:此功能无扣除积分功能)"><el-input type="number" v-model="config.roll_call_rate" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="扭蛋(扣除积分)"><el-input type="number" v-model="config.egg_integral" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="扭蛋(中奖率)"><el-input type="number" v-model="config.egg_rate" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="开箱(扣除积分)"><el-input type="number" v-model="config.box_integral" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="开箱(中奖率)"><el-input type="number" v-model="config.box_rate" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="炫酷抽奖(扣除积分)"><el-input type="number" v-model="config.cool_integral" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="炫酷抽奖(中奖率)"><el-input type="number" v-model="config.cool_rate" :min="0" :step="1"></el-input></el-form-item>
 			</el-form>
+		</div>
+		<div slot="footer" class="dialog-footer">
+			<el-button @click="close()">取 消</el-button>
+			<el-button type="primary" @click="onSubmit">保存配置</el-button>
 		</div>
 	</el-dialog>
 </template>
@@ -32,8 +40,16 @@ export default {
 			config: {
 				refresh: 1,
 				rollcall: 1,
-				rollreward: 1,
-				time: 30
+				time: 30,
+				roll_integral: 0,
+				roll_rate: 100,
+				roll_call_rate: 100,
+				egg_integral: 0,
+				egg_rate: 100,
+				box_integral: 0,
+				box_rate: 100,
+				cool_integral: 0,
+				cool_rate: 100
 			}
 		};
 	},
@@ -55,6 +71,7 @@ export default {
 
 			this.$nextTick(() => {
 				this.$emit('on-reset');
+				this.visible = false;
 			});
 		}
 	}

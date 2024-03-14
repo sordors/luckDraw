@@ -8,7 +8,7 @@
     {
       "key": 2,
       "name": "李四",
-      "integral": 6
+      "integral": 0
     },
     {
       "key": 3,
@@ -45,13 +45,22 @@
     "refresh": 1,
     "rollcall": 1,
     "rollreward": 1,
-    "time": 30
+    "time": 30,
+    "roll_integral": 0,
+    "roll_rate": 100,
+    "egg_integral": 0,
+    "egg_rate": 100,
+    "box_integral": 0,
+    "box_rate": 100,
+    "cool_integral": "1",
+    "cool_rate": 100,
+    "roll_call_rate": "100"
   },
   "rewards": [
     {
       "key": 1,
       "name": "电动牙刷",
-      "num": 2
+      "num": 0
     },
     {
       "key": 2,
@@ -61,7 +70,7 @@
     {
       "key": 3,
       "name": "高品质不锈钢保温杯",
-      "num": 4
+      "num": 0
     },
     {
       "key": 4,
@@ -71,7 +80,7 @@
     {
       "key": 5,
       "name": "蓝牙耳机",
-      "num": 0
+      "num": 6
     },
     {
       "key": 6,
@@ -207,5 +216,21 @@
     "Gashapon": [],
     "RollBall": []
   },
-  "rank": []
+  "rank": [
+    {
+      "name": "李四",
+      "store": 10,
+      "ranking": 1
+    },
+    {
+      "name": "李四",
+      "store": 10,
+      "ranking": 2
+    },
+    {
+      "name": "李四",
+      "store": 0,
+      "ranking": 3
+    }
+  ]
 }

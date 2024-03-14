@@ -28,7 +28,7 @@ export default {
 			let result = this.$db.get('result.RollCall').value();
 
 			let users = this.$db.get('users').value();
-			users.forEach(item => {
+			users.forEach((item) => {
 				if (config.rollreward == 2 && result.length > 0) {
 					if (result.indexOf(item.name) != -1) {
 						this.users.push(item.name);
@@ -65,10 +65,7 @@ export default {
 					this.timer = null;
 					let number = Math.floor(Math.random() * _this.users.length);
 					_this.message = _this.users[number];
-					this.$db
-						.get('result.RollCall')
-						.push(_this.message)
-						.write();
+					this.$db.get('result.RollCall').push(_this.message).write();
 					this.$emit('on-run', this.running);
 				}
 			} else {
@@ -93,23 +90,24 @@ export default {
 		cursor: pointer;
 	}
 	.box {
-		width: 100%;
 		height: 160px;
 		background: #e6a23c;
-		font-size: 50px;
+		font-size: 40px;
 		text-align: center;
-		line-height: 160px;
+		line-height: 140px;
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: 400px;
+		overflow: hidden;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.running-btn {
 		margin-top: 20px;
-		width: 320px;
+		width: 400px;
 	}
 }
 </style>

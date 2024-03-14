@@ -1,28 +1,35 @@
 <template>
 	<div class="home">
-		<div class="draw">
+		<div class="draw" :class="mode == 6 ? 'newBackGroup' : ''">
 			<div class="header">
-				<el-button class="header-btn btn-5" type="text" @click="openUsers()">用户配置</el-button>
-				<el-button class="header-btn btn-4" type="text" @click="openRewards()">奖项配置</el-button>
-				<el-button class="header-btn btn-3" type="text" @click="openResult()">抽奖结果</el-button>
-				<el-button class="header-btn btn-2" type="text" @click="openConfig()">系统配置</el-button>
-				<el-button class="header-btn btn-1" type="text" @click="introduce = true">关于软件</el-button>
+				<div class="header-left">
+					<el-button class="user-btn" type="text" @click="chooseUser()">
+						{{ user ? '姓名：' + user.name + ',积分：' + user.integral + '，点击重选' : '选择用户' }}
+					</el-button>
+				</div>
+				<div class="header-right">
+					<el-button class="header-btn btn-5" type="text" @click="openUsers()">用户配置</el-button>
+					<el-button class="header-btn btn-4" type="text" @click="openRewards()">奖项配置</el-button>
+					<el-button class="header-btn btn-3" type="text" @click="openResult()">抽奖结果</el-button>
+					<el-button class="header-btn btn-2" type="text" @click="openConfig()">系统配置</el-button>
+					<el-button class="header-btn btn-1" type="text" @click="introduce = true">关于软件</el-button>
+				</div>
 			</div>
 
 			<div class="main-content" v-show="mode == 0">
-				<div style="width: 608px;">
+				<div style="width: 608px">
 					<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">随机抽奖</el-button>
 					<el-button class="mode-btn pink" type="primary" @click="changeMode(2)">随机点名</el-button>
 				</div>
-				<div style="width: 608px;">
+				<div style="width: 608px">
 					<el-button class="mode-btn green" type="primary" @click="changeMode(3)">点名抽奖</el-button>
 					<el-button class="mode-btn yellow" type="primary" @click="changeMode(4)">扭一下蛋</el-button>
 				</div>
-				<div style="width: 608px;">
+				<div style="width: 608px">
 					<el-button class="mode-btn red" type="primary" @click="changeMode(5)">开个箱吧</el-button>
 					<el-button class="mode-btn blue-2" type="primary" @click="changeMode(6)">炫酷抽奖</el-button>
 				</div>
-				<div style="width: 608px;"><el-button class="mode-btn orange" type="primary" @click="gotoSubject()">趣味竞赛</el-button></div>
+				<div style="width: 608px"><el-button class="mode-btn orange" type="primary" @click="gotoSubject()">趣味竞赛</el-button></div>
 			</div>
 			<div class="main-content" v-show="mode != 0">
 				<RollReward ref="rollreward" v-if="mode == 1" @on-close="backHome" @on-run="runTask"></RollReward>
@@ -35,7 +42,7 @@
 			<img src="../assets/voice_close.png" class="voice" @click="voiceChage(true)" v-if="!voice" />
 			<img src="../assets/voice_open.png" class="voice" @click="voiceChage(false)" v-if="voice" />
 		</div>
-		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none;">
+		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none">
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签
 		</audio>
@@ -44,6 +51,8 @@
 		<UserList ref="users"></UserList>
 		<RewardList ref="rewards"></RewardList>
 		<Result ref="result" @on-reset="reset"></Result>
+		<Challenge ref="challenge" @on-success="onChooseUser"></Challenge>
+
 		<el-dialog :visible.sync="introduce" width="600px" title="关于软件" center>
 			<div class="introduce">
 				<p>以下纯属自言自语，看到最好看不到你可能是瞎了：</p>
@@ -52,7 +61,7 @@
 				<p>3. 若无天灾人祸，你们应该活得比我们久，会的会比我们多，学的会比我们快，一粒尘可填海，一根草亦可斩尽日月星辰，即使渺小，也可优秀！</p>
 				<p>4. 每个人都有属于自己的一片森林，也许我们从来不曾去过，但它一直在那里，总会在那里。迷失的人迷失了，相逢的人会再相逢。——村上春树</p>
 				<p>5. 最后古语曰：老师也是人，请爱她们，关心她们，记住她们。(我还没找到出处就是了)</p>
-				<p style="text-align: right;">此致，敬礼并圆润的转圈圈离开</p>
+				<p style="text-align: right">此致，敬礼并圆润的转圈圈离开</p>
 			</div>
 		</el-dialog>
 	</div>
@@ -67,13 +76,14 @@ import RollCall from './RollCall';
 import RollReward from './RollReward';
 import RollCallReward from './RollCallReward';
 import Gashapon from './Gashapon';
+import Challenge from './Challenge';
 import RewardBox from './RewardBox';
 import RollBall from './RollBall';
 import bgaudio from '@/assets/before.mp3';
 import beginaudio from '@/assets/start.mp3';
 
 export default {
-	components: { Config, UserList, RewardList, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
+	components: { Config, Challenge, UserList, RewardList, RollCall, RollReward, RollCallReward, Gashapon, RewardBox, Result, RollBall },
 	data() {
 		return {
 			mode: 0,
@@ -82,7 +92,13 @@ export default {
 			introduce: false
 		};
 	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
+	},
 	mounted() {
+		console.log(this.$store.state.user);
 		let config = this.$db.get('config').value();
 		if (config.refresh == 1) {
 			this.$db
@@ -100,6 +116,12 @@ export default {
 		this.voiceChage(false);
 	},
 	methods: {
+		chooseUser() {
+			this.$refs.challenge.open();
+		},
+		onChooseUser() {
+			console.log(this.$store);
+		},
 		playHandler() {
 			this.voice = true;
 		},
@@ -210,7 +232,7 @@ export default {
 					this.$refs.rewardbox.init();
 				}
 
-				if (mode == 6) {
+				if (this.mode == 6) {
 					this.$refs.rewardball.init();
 				}
 			});
@@ -235,27 +257,37 @@ export default {
 	height: 50px;
 	line-height: 50px;
 	position: relative;
-	.header-btn {
-		position: absolute;
-		top: 17px;
-		padding: 0;
-		z-index: 99;
-		color: #000;
-		font-weight: bold;
-		&.btn-1 {
-			right: 20px;
+	display: flex;
+	width: 100%;
+	padding: 0 20px;
+
+	.header-right {
+		justify-content: center;
+		align-items: center;
+		flex: 1;
+		display: flex;
+		justify-content: flex-end;
+		.header-btn {
+			padding: 0;
+			z-index: 99;
+			color: #000;
+			font-weight: bold;
+			width: 80px;
+			font-size: 16px;
 		}
-		&.btn-2 {
-			right: 100px;
-		}
-		&.btn-3 {
-			right: 180px;
-		}
-		&.btn-4 {
-			right: 260px;
-		}
-		&.btn-5 {
-			right: 340px;
+	}
+	.header-left {
+		width: 200px;
+		display: flex;
+		.user-btn {
+			padding: 0;
+			color: #f10000;
+			font-weight: bold;
+			cursor: pointer;
+			z-index: 99;
+			width: 200px;
+			text-align: left;
+			font-size: 16px;
 		}
 	}
 }
@@ -288,6 +320,8 @@ export default {
 			margin-left: 0px;
 			width: 300px;
 			height: 100px;
+			border-radius: 20px;
+			font-size: 22px;
 		}
 		.red {
 			background: #f44336;
@@ -315,7 +349,6 @@ export default {
 		.orange {
 			background: #fe9500;
 			border-color: #fe9500;
-
 			width: 100%;
 		}
 
@@ -323,6 +356,17 @@ export default {
 			background: #2196f3;
 			border-color: #2196f3;
 		}
+	}
+}
+
+.newBackGroup {
+	background-image: url('../assets/bg2.jpeg') !important;
+	.header-btn {
+		color: #ffffff !important;
+	}
+
+	.user-btn {
+		color: #00f735 !important;
 	}
 }
 

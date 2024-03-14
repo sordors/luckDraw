@@ -10,7 +10,7 @@
 
 		<el-button class="run-btn" type="primary" @click="start">{{ title }}</el-button>
 
-		<el-dialog :visible.sync="dialogVisible" width="260px"><div class="digcontent" v-html="desc"></div></el-dialog>
+		<el-dialog :visible.sync="dialogVisible" width="300px"><div class="digcontent" v-html="desc"></div></el-dialog>
 	</div>
 </template>
 
@@ -24,29 +24,31 @@ export default {
 			running: false,
 			timer: null,
 			dialogVisible: false,
-			desc: '咦？没有抽中？'
+			desc: '咦？没有抽中？',
+			config: null,
+			canvas: null
 		};
+	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
 	},
 	methods: {
 		init() {
 			this.initData();
-
 			this.$nextTick(() => {
 				this.startTagCanvas();
 			});
 		},
 		initData() {
-			let config = this.$db.get('config').value();
+			this.config = this.$db.get('config').value();
 			this.data = this.$db.get('rewards').value();
 			let result = this.$db.get('result.RollBall').value();
 			this.rewards = [];
-			this.data.forEach(item => {
-				if (config.rollreward == 2 && result.length > 0) {
-					if (result.indexOf(item.name) != -1) {
-						this.rewards.push(item.name);
-					}
-				} else {
-					this.rewards.push(item.name);
+			this.data.forEach((item) => {
+				if (item.num > 0) {
+					this.rewards.push(item);
 				}
 			});
 		},
@@ -54,21 +56,25 @@ export default {
 			return [0.1 * Math.random() + 0.01, -(0.1 * Math.random() + 0.01)];
 		},
 		createCanvas() {
-			const canvas = document.createElement('canvas');
-			canvas.width = 500;
-			canvas.height = 500;
-			canvas.id = 'rootcanvas';
-			this.$el.querySelector('#box').appendChild(canvas);
+			if (this.canvas) {
+				this.$el.querySelector('#box').removeChild(this.canvas);
+			}
+
+			this.canvas = document.createElement('canvas');
+			this.canvas.width = 500;
+			this.canvas.height = 500;
+			this.canvas.id = 'rootcanvas';
+			this.$el.querySelector('#box').appendChild(this.canvas);
 		},
 		startTagCanvas() {
 			this.createCanvas();
 			const { speed } = this;
 			window.TagCanvas.Start('rootcanvas', 'tags', {
-				textColour: '#2997F7',
+				textColour: '#ffffff',
 				initial: speed(),
 				dragControl: 1,
 				decel: 0.5,
-				textHeight: 26,
+				textHeight: 16,
 				minSpeed: 0.01,
 				noSelect: true
 			});
@@ -83,6 +89,16 @@ export default {
 		},
 		start() {
 			let _this = this;
+			let integral = _this.config.cool_integral ? _this.config.cool_integral : 0;
+			integral = parseInt(integral);
+			integral = isNaN(integral) ? 0 : integral;
+
+			if (_this.user && integral > 0 && _this.user.integral < integral) {
+				_this.desc = '😭积分不足！';
+				_this.dialogVisible = true;
+				return;
+			}
+
 			if (_this.rewards.length) {
 				if (!this.running) {
 					this.running = true;
@@ -98,21 +114,46 @@ export default {
 					this.$nextTick(() => {
 						this.reloadTagCanvas();
 					});
-					if (!_this.rewards.length) {
-						_this.desc = '咦？没有抽中？';
-					} else {
-						_this.desc = '恭喜你获得<br>' + _this.rewards[number];
+
+					let rate = this.config.cool_rate ? this.config.cool_rate : 100;
+					rate = parseInt(rate);
+					rate = isNaN(rate) ? 100 : rate;
+					const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+					if (randomNumber <= rate) {
+						let currentRewards = _this.rewards[number];
+						_this.desc = '😃恭喜你获得<br>' + currentRewards.name;
+						let ballResult = _this.user ? _this.user.name + '抽中' + currentRewards.name : currentRewards.name;
 						_this.$db
 							.get('result.RollBall')
-							.push(_this.rewards[number])
+							.push(ballResult)
 							.write();
-						_this.initData();
+						_this.$db
+							.get('rewards')
+							.find({ key: currentRewards.key })
+							.assign({ num: currentRewards.num - 1 })
+							.write();
+						
+						_this.init();
+					} else {
+						_this.desc = '😭咦？没有抽中？';
 					}
+
+					//扣除当前用户积分，如果有用户的情况下
+					if (_this.user && integral > 0 && _this.user.integral >= integral) {
+						let newIntegral = parseInt(_this.user.integral) - parseInt(integral);
+						this.$db.get('users').find({ key: _this.user.key }).assign({ integral: newIntegral }).write();
+						//更新当前用户信息
+						let user = Object.assign({}, _this.user);
+						user.integral = newIntegral;
+						this.$store.commit('ADD_USER', user);
+					}
+
 					_this.dialogVisible = true;
 					this.$emit('on-run', this.running);
 				}
 			} else {
-				_this.desc = '咦？没有抽中？';
+				_this.desc = '😭奖池已空！！！';
 				_this.dialogVisible = true;
 			}
 		}
@@ -152,8 +193,8 @@ export default {
 }
 
 .digcontent {
-	font-size: 30px;
-	color: #ff1a4b;
+	font-size: 24px;
+	color: #e6a23c;
 	text-align: center;
 	height: 140px;
 	display: flex;

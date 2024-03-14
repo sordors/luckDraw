@@ -33,7 +33,15 @@ db.defaults({
 		"refresh": 1,
 		"rollcall": 1,
 		"rollreward": 1,
-		"time": 30
+		"time": 30,
+		"roll_integral": 0,
+		"roll_rate": 100,
+		"egg_integral": 0,
+		"egg_rate": 100,
+		"box_integral": 0,
+		"box_rate": 100,
+		"cool_integral": 0,
+		"cool_rate": 100
 	},
 	rewards: [],
 	result: {

@@ -58,27 +58,28 @@ export default {
 			running: false,
 			rewards: [],
 			dialogVisible: false,
-			desc: '咦？没有抽中？'
+			desc: '咦？没有抽中？',
+			config: null
 		};
+	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
 	},
 	methods: {
 		init() {
 			console.log('初始化');
-			let config = this.$db.get('config').value();
-			let result = this.$db.get('result.RewardBox').value();
+			this.config = this.$db.get('config').value();
 			let rewards = this.$db.get('rewards').value();
 			this.title = '开始抽奖';
 			this.rewards = [];
-			this.running = false;
-			rewards.forEach(item => {
-				if (config.rollreward == 2 && result.length > 0) {
-					if (result.indexOf(item.name) != -1) {
-						this.rewards.push(item.name);
-					}
-				} else {
-					this.rewards.push(item.name);
+			rewards.forEach((item) => {
+				if (item.num > 0) {
+					this.rewards.push(item);
 				}
 			});
+			this.running = false;
 		},
 		close() {
 			this.$nextTick(() => {
@@ -87,6 +88,16 @@ export default {
 		},
 		start(item) {
 			let _this = this;
+			let integral = _this.config.box_integral ? _this.config.box_integral : 0;
+			integral = parseInt(integral);
+			integral = isNaN(integral) ? 0 : integral;
+			
+			if (_this.user && integral > 0 && _this.user.integral < integral) {
+				_this.desc = '😭积分不足！';
+				_this.dialogVisible = true;
+				return;
+			}
+			
 			item.state = true;
 			if (!this.running) {
 				this.running = true;
@@ -96,23 +107,43 @@ export default {
 				item.state = false;
 				item.open = true;
 				_this.count = _this.count + 1;
-
-				let reward = Math.floor(5 * Math.random() + 1);
-				if (reward == 5) {
-					_this.desc = '咦？没有抽中？';
+				
+				let rate = this.config.egg_rate ? this.config.egg_rate : 100;
+				rate = parseInt(rate);
+				rate = isNaN(rate) ? 100 : rate;
+				const randomNumber = Math.floor(Math.random() * 100) + 1;
+				
+				if (randomNumber <= rate) {
+					let currentRewards = _this.rewards[number];
+					_this.desc = '😃恭喜你获得<br>' + currentRewards.name;
+					let ballResult = _this.user ? _this.user.name + '抽中' + currentRewards.name : currentRewards.name;
+					_this.$db.get('result.Gashapon').push(ballResult).write();
+					_this.$db
+						.get('rewards')
+						.find({ key: currentRewards.key })
+						.assign({ num: currentRewards.num - 1 })
+						.write();
+				
+					_this.init();
 				} else {
-					let number = Math.floor(Math.random() * _this.rewards.length);
-					if (!_this.rewards.length) {
-						_this.desc = '咦？没有抽中？';
-					} else {
-						_this.desc = '恭喜你获得<br>' + _this.rewards[number];
-						_this.$db
-							.get('result.RewardBox')
-							.push(_this.rewards[number])
-							.write();
-						_this.init();
-					}
+					this.desc = '😭咦？没有抽中？';
 				}
+				
+				// let reward = Math.floor(5 * Math.random() + 1);
+				// if (reward == 5) {
+				// 	_this.desc = '咦？没有抽中？';
+				// } else {
+				// 	let number = Math.floor(Math.random() * _this.rewards.length);
+				// 	if (!_this.rewards.length) {
+				// 		_this.desc = '咦？没有抽中？';
+				// 	} else {
+				// 		_this.desc = '恭喜你获得<br>' + _this.rewards[number];
+				// 		_this.$db.get('result.RewardBox').push(_this.rewards[number]).write();
+				// 		_this.init();
+				// 	}
+				// }
+				
+				
 				_this.dialogVisible = true;
 			}, 1000);
 
@@ -120,7 +151,7 @@ export default {
 				if (this.count == 9) {
 					this.count = 0;
 					let list = [];
-					this.list.forEach(item => {
+					this.list.forEach((item) => {
 						list.push({
 							state: false,
 							open: false

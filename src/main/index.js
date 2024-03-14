@@ -2,7 +2,7 @@ import {
 	app,
 	BrowserWindow
 } from 'electron'
-import '../renderer/store'
+//import '../renderer/store'
 
 /**
  * Set `__static` path to static files in production
@@ -23,7 +23,13 @@ function createWindow() {
 	 */
 	mainWindow = new BrowserWindow({
 		useContentSize: true,
-		show: false
+		show: false,
+		minWidth: 1300,
+		minHeight: 800,
+		webPreferences: {
+			nodeIntegration: true,
+			contextIsolation: false
+		}
 	})
 
 
