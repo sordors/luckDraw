@@ -32,7 +32,6 @@ db.defaults({
 	config: {
 		"refresh": 1,
 		"rollcall": 1,
-		"rollreward": 1,
 		"time": 30,
 		"roll_integral": 0,
 		"roll_rate": 100,

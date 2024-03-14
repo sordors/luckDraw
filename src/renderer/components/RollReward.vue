@@ -113,7 +113,7 @@ export default {
 					this.$emit('on-run', this.running);
 				}
 			} else {
-				this.$message.error('没有可以抽取的奖励了');
+				this.$message.error('😭没有奖品了！');
 			}
 		}
 	}

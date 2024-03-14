@@ -75,7 +75,6 @@ export default {
 		overflow: hidden;
 		.container {
 			height: 500px;
-			height: 100%;
 			overflow-y: auto;
 			padding: 10px;
 		}

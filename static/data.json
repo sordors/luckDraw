@@ -28,7 +28,7 @@
     {
       "key": 6,
       "name": "陈十四",
-      "integral": 30
+      "integral": 25
     },
     {
       "key": 7,
@@ -60,42 +60,42 @@
     {
       "key": 1,
       "name": "电动牙刷",
-      "num": 0
+      "num": 1
     },
     {
       "key": 2,
       "name": "便携式充电宝",
-      "num": 3
+      "num": 0
     },
     {
       "key": 3,
       "name": "高品质不锈钢保温杯",
-      "num": 0
+      "num": 2
     },
     {
       "key": 4,
       "name": "书籍《如何高效学习》",
-      "num": 6
+      "num": 1
     },
     {
       "key": 5,
       "name": "蓝牙耳机",
-      "num": 6
+      "num": 2
     },
     {
       "key": 6,
       "name": "可折叠休闲椅",
-      "num": 0
+      "num": 2
     },
     {
       "key": 7,
       "name": "优质记事本套装",
-      "num": 0
+      "num": 1
     },
     {
       "key": 8,
       "name": "儿童拼图玩具",
-      "num": 0
+      "num": 2
     },
     {
       "key": 9,
@@ -229,8 +229,18 @@
     },
     {
       "name": "李四",
-      "store": 0,
+      "store": 10,
       "ranking": 3
+    },
+    {
+      "name": "李四",
+      "store": 0,
+      "ranking": 4
+    },
+    {
+      "name": "李四",
+      "store": 0,
+      "ranking": 5
     }
   ]
 }

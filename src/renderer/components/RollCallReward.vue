@@ -97,25 +97,21 @@ export default {
 					const randomNumber = Math.floor(Math.random() * 100) + 1;
 
 					if (randomNumber <= rate) {
-						if (!_this.rewards.length) {
-							_this.rewardMessage = '未抽中奖品';
-						} else {
-							let rewardNum = Math.floor(Math.random() * _this.rewards.length);
-							let currentRewards = _this.rewards[number];
-							_this.rewardMessage = currentRewards.name;
-
-							this.$db
-								.get('result.RollCallReward')
-								.push(_this.message + '抽中' + _this.rewardMessage)
-								.write();
-							_this.$db
-								.get('rewards')
-								.find({ key: currentRewards.key })
-								.assign({ num: currentRewards.num - 1 })
-								.write();
-
-							_this.initData();
-						}
+						let rewardNum = Math.floor(Math.random() * _this.rewards.length);
+						let currentRewards = _this.rewards[rewardNum];
+						_this.rewardMessage = currentRewards.name;
+						
+						this.$db
+							.get('result.RollCallReward')
+							.push(_this.message + '抽中' + _this.rewardMessage)
+							.write();
+						_this.$db
+							.get('rewards')
+							.find({ key: currentRewards.key })
+							.assign({ num: currentRewards.num - 1 })
+							.write();
+						
+						_this.initData();
 					} else {
 						_this.rewardMessage = '未抽中奖品';
 					}
@@ -125,7 +121,7 @@ export default {
 					_this.$emit('on-run', this.running);
 				}
 			} else {
-				this.$message.error('没有可以抽取的奖励了');
+				this.$message.error('😭没有奖品了！');
 			}
 		}
 	}

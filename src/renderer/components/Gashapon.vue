@@ -26,123 +26,142 @@
 				<span class="diaL_four" v-if="number == 4"></span>
 			</div>
 		</div>
-		<el-dialog :visible.sync="dialogVisible" width="260px"><div class="digcontent" v-html="desc"></div></el-dialog>
+		<el-dialog :visible.sync="dialogVisible" width="300px">
+			<div class="digcontent" v-html="desc"></div>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			title: 'GO',
-			ball1: false,
-			ball2: false,
-			ball3: false,
-			ball4: false,
-			ball5: false,
-			ball6: false,
-			ball7: false,
-			ball8: false,
-			ball9: false,
-			ball10: false,
-			running: false,
-			timer: null,
-			number: 0,
-			rewards: [],
-			dialogVisible: false,
-			desc: '咦？没有抽中？',
-			config: null
-		};
-	},
-	computed: {
-		user() {
-			return this.$store.state.user.data;
-		}
-	},
-	methods: {
-		init() {
-			this.config = this.$db.get('config').value();
-			this.rewards = [];
-			let rewards = this.$db.get('rewards').value();
-			rewards.forEach((item) => {
-				this.rewards.push(item);
-			});
+	export default {
+		data() {
+			return {
+				title: 'GO',
+				ball1: false,
+				ball2: false,
+				ball3: false,
+				ball4: false,
+				ball5: false,
+				ball6: false,
+				ball7: false,
+				ball8: false,
+				ball9: false,
+				ball10: false,
+				running: false,
+				timer: null,
+				number: 0,
+				rewards: [],
+				dialogVisible: false,
+				desc: '咦？没有抽中？',
+				config: null
+			};
 		},
-		close() {
-			this.$nextTick(() => {
-				this.$emit('on-close', {});
-			});
-		},
-		start() {
-			let _this = this;
-			let integral = _this.config.egg_integral ? _this.config.egg_integral : 0;
-			integral = parseInt(integral);
-			integral = isNaN(integral) ? 0 : integral;
-
-			if (_this.user && integral > 0 && _this.user.integral < integral) {
-				_this.desc = '😭积分不足！';
-				_this.dialogVisible = true;
-				return;
+		computed: {
+			user() {
+				return this.$store.state.user.data;
 			}
+		},
+		methods: {
+			init() {
+				this.config = this.$db.get('config').value();
+				this.rewards = [];
+				let rewards = this.$db.get('rewards').value();
+				rewards.forEach((item) => {
+					if (item.num > 0) {
+						this.rewards.push(item);
+					}
+				});
+			},
+			close() {
+				this.$nextTick(() => {
+					this.$emit('on-close', {});
+				});
+			},
+			start() {
+				let _this = this;
+				let integral = _this.config.egg_integral ? _this.config.egg_integral : 0;
+				integral = parseInt(integral);
+				integral = isNaN(integral) ? 0 : integral;
 
-			if (!this.running) {
-				this.running = true;
-				this.$emit('on-run', this.running);
-				this.title = 'STOP';
-				for (let i = 1; i <= 10; i++) {
-					let key = 'ball' + i;
-					this[key] = true;
+				if (_this.user && integral > 0 && _this.user.integral < integral) {
+					_this.desc = '😭积分不足！';
+					_this.dialogVisible = true;
+					return;
 				}
-			} else {
-				this.running = false;
-				this.title = 'GO';
-				for (let i = 1; i <= 10; i++) {
-					let key = 'ball' + i;
-					this[key] = false;
+
+				if (!_this.rewards.length) {
+					this.desc = '😭没有奖品了！';
+					_this.dialogVisible = true;
+					return;
 				}
 
-				let rate = this.config.egg_rate ? this.config.egg_rate : 100;
-				rate = parseInt(rate);
-				rate = isNaN(rate) ? 100 : rate;
-				const randomNumber = Math.floor(Math.random() * 100) + 1;
-
-				if (randomNumber <= rate) {
-					let currentRewards = _this.rewards[number];
-					_this.desc = '😃恭喜你获得<br>' + currentRewards.name;
-					let ballResult = _this.user ? _this.user.name + '抽中' + currentRewards.name : currentRewards.name;
-					_this.$db.get('result.Gashapon').push(ballResult).write();
-					_this.$db
-						.get('rewards')
-						.find({ key: currentRewards.key })
-						.assign({ num: currentRewards.num - 1 })
-						.write();
-
-					_this.init();
+				if (!this.running) {
+					this.running = true;
+					this.$emit('on-run', this.running);
+					this.title = 'STOP';
+					for (let i = 1; i <= 10; i++) {
+						let key = 'ball' + i;
+						this[key] = true;
+					}
 				} else {
-					this.desc = '😭咦？没有抽中？';
+					this.running = false;
+					this.title = 'GO';
+					for (let i = 1; i <= 10; i++) {
+						let key = 'ball' + i;
+						this[key] = false;
+					}
+
+					let rate = this.config.egg_rate ? this.config.egg_rate : 100;
+					rate = parseInt(rate);
+					rate = isNaN(rate) ? 100 : rate;
+					const randomNumber = Math.floor(Math.random() * 100) + 1;
+
+					if (randomNumber <= rate && _this.rewards.length) {
+						let number = Math.floor(Math.random() * _this.rewards.length);
+						let currentRewards = _this.rewards[number];
+						_this.desc = '😃恭喜你获得<br>' + currentRewards.name;
+						let ballResult = _this.user ? _this.user.name + '抽中' + currentRewards.name : currentRewards.name;
+						_this.$db.get('result.Gashapon').push(ballResult).write();
+						_this.$db
+							.get('rewards')
+							.find({
+								key: currentRewards.key
+							})
+							.assign({
+								num: currentRewards.num - 1
+							})
+							.write();
+
+						_this.init();
+					} else {
+						this.desc = '😭咦？没有抽中？';
+					}
+
+					//扣除当前用户积分，如果有用户的情况下
+					if (_this.user && integral > 0 && _this.user.integral >= integral) {
+						let newIntegral = parseInt(_this.user.integral) - parseInt(integral);
+						this.$db.get('users').find({
+							key: _this.user.key
+						}).assign({
+							integral: newIntegral
+						}).write();
+						//更新当前用户信息
+						let user = Object.assign({}, _this.user);
+						user.integral = newIntegral;
+						this.$store.commit('ADD_USER', user);
+					}
+
+					this.dialogVisible = true;
+					setTimeout(() => {
+						this.number = 0;
+					}, 1000);
+					this.$emit('on-run', this.running);
 				}
-				
-				//扣除当前用户积分，如果有用户的情况下
-				if (_this.user && integral > 0 && _this.user.integral >= integral) {
-					let newIntegral = parseInt(_this.user.integral) - parseInt(integral);
-					this.$db.get('users').find({ key: _this.user.key }).assign({ integral: newIntegral }).write();
-					//更新当前用户信息
-					let user = Object.assign({}, _this.user);
-					user.integral = newIntegral;
-					this.$store.commit('ADD_USER', user);
-				}
-				
-				this.dialogVisible = true;
-				setTimeout(() => {
-					this.number = 0;
-				}, 1000);
-				this.$emit('on-run', this.running);
 			}
 		}
-	}
-};
+	};
 </script>
 
 <style lang="scss" scoped>
-@import './Egg.scss';
+	@import './Egg.scss';
 </style>

@@ -17,6 +17,11 @@ export default new Router({
 			path: '/subject',
 			name: 'subject',
 			component: () => import("@/components/Subject.vue")
+		},
+		{
+			path: '/card',
+			name: 'card',
+			component: () => import("@/components/CardReward.vue")
 		}
 	]
 })

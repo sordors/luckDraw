@@ -80,9 +80,9 @@ export default {
 <style lang="scss" scoped>
 .c-LotteryConfig {
 	.el-dialog__body {
-		height: 340px;
+		overflow: hidden;
 		.container {
-			height: 100%;
+			height: 500px;
 			overflow-y: auto;
 			padding: 0 10px;
 		}
