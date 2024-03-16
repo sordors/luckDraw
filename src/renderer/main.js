@@ -35,6 +35,7 @@ db.defaults({
 		"time": 30,
 		"roll_integral": 0,
 		"roll_rate": 100,
+		"roll_call_rate": 100,
 		"egg_integral": 0,
 		"egg_rate": 100,
 		"box_integral": 0,

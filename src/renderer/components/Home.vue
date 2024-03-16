@@ -16,6 +16,7 @@
 				</div>
 			</div>
 
+
 			<div class="main-content" v-show="mode == 0">
 				<div style="width: 608px">
 					<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">随机抽奖</el-button>

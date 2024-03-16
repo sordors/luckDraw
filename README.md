@@ -30,7 +30,7 @@ npm install or yarn install
 npm run dev or yarn run dev
 
 # build electron application for production
-npm run build or yanr build
+npm run build or yran build
 
 ```
 
