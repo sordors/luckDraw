@@ -4,10 +4,9 @@
 			<el-input
 				type="textarea"
 				:rows="10"
-				placeholder="请输入对应的用户(可直接从excel复制)，一行一个,格式:名字+空格+积分(积分不填默认为0)。如：
-张三 2
-李四 3
-王五 4
+				placeholder="请输入对应的保底奖(可直接从excel复制)，一行一个,格式:奖品如：
+保底奖1
+保底奖2
 								"
 				v-model="listStr"
 			></el-input>
@@ -30,13 +29,13 @@ export default {
 	methods: {
 		open() {
 			this.showImport = true;
-			let users = this.$db.get('users').value();
+			let rewards = this.$db.get('base_rewards').value();
 			this.listStr = '';
-			users.forEach((item) => {
+			rewards.forEach((item) => {
 				if (this.listStr.length) {
-					this.listStr = this.listStr + '\n' + item.name + ' ' + item.integral;
+					this.listStr = this.listStr + '\n' + item.name;
 				} else {
-					this.listStr = item.name + ' ' + item.integral;
+					this.listStr = item.name;
 				}
 			});
 		},
@@ -53,34 +52,26 @@ export default {
 			if (rows && rows.length > 0) {
 				rows.forEach((item, index) => {
 					if (item.length) {
-						item = item.replace(/\s+/g, ' ');
-						let arr = item.split(" ");
-						let name = arr[0];
-						let integral = arr.length >= 2 ? parseInt(arr[1]) : 0;
-						integral = isNaN(integral) ? 0 : integral;
 						list.push({
 							key: index + 1,
-							name: name,
-							integral: integral
+							name: item
 						});
 					}
 				});
 			}
-			this.$db.set('users', list).write();
-			// this.$db.set('result.RollCall', []).write();
-			// this.$db.set('result.RollCallReward', []).write();
+			this.$db.set('base_rewards', list).write();
 			this.$message({
 				message: '保存成功',
 				type: 'success'
 			});
-			this.$emit('on-success',{});
 			this.showImport = false;
+			this.$emit('on-success',{});
 		}
 	}
 };
 </script>
 
-<style lang="scss" scoped> 
+<style lang="scss" scoped>
 .import-dialog {
 	.footer {
 		height: 50px;

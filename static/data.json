@@ -54,7 +54,10 @@
     "box_rate": 100,
     "cool_integral": "1",
     "cool_rate": 100,
-    "roll_call_rate": "100"
+    "roll_call_rate": "100",
+    "card_no_rewrad": "3",
+    "card_base_rewrad": "1",
+    "card_base_integral": "10"
   },
   "rewards": [
     {
@@ -242,5 +245,6 @@
       "store": 0,
       "ranking": 5
     }
-  ]
+  ],
+  "base_rewards": []
 }

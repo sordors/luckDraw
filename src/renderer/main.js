@@ -41,16 +41,21 @@ db.defaults({
 		"box_integral": 0,
 		"box_rate": 100,
 		"cool_integral": 0,
-		"cool_rate": 100
+		"cool_rate": 100,
+		"card_no_rewrad": 1,
+		"card_base_rewrad": 1,
+		"card_base_integral": 0
 	},
 	rewards: [],
+	base_rewards: [],
 	result: {
 		"RewardBox": [],
 		"RollCall": [],
 		"RollCallReward": [],
 		"RollReward": [],
 		"Gashapon": [],
-		"RollBall": []
+		"RollBall": [],
+		"CardReward": []
 	},
 	rank: []
 }).write()

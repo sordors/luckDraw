@@ -67,9 +67,10 @@ export default {
 				});
 			}
 			this.$db.set('rewards', list).write();
-			this.$db.set('result.RewardBox', []).write();
-			this.$db.set('result.RollReward', []).write();
-			this.$db.set('result.Gashapon', []).write();
+			// this.$db.set('result.RewardBox', []).write();
+			// this.$db.set('result.RollReward', []).write();
+			// this.$db.set('result.Gashapon', []).write();
+			// this.$db.set('result.RollCallReward', []).write();
 			this.$message({
 				message: '保存成功',
 				type: 'success'
