@@ -7,62 +7,23 @@
 				</el-button>
 			</div>
 			<div class="header-right">
+				<el-button class="header-btn btn-3" type="text" @click="openUsers()">名单配置</el-button>
+				<el-button class="header-btn btn-4" type="text" @click="openRewards()">奖项配置</el-button>
+				<el-button class="header-btn btn-3" type="text" @click="openResult()">抽奖结果</el-button>
 				<el-button class="header-btn btn-1" type="text" @click="openConfig()">系统配置</el-button>
 			</div>
 		</div>
-		<div class="grid">
-			<div class="grid-left">
-				<div class="project ani0">
-					<div class="mask">
-						<div class="back">7</div>
-						<div class="front"><span></span></div>
+		<div class="content">
+			<div class="grid">
+				<div class="grid-left">
+					<div class="project" :class="item.class" v-for="(item, index) in list" :key="index">
+						<div class="mask">
+							<div class="back">{{ item.reward }}</div>
+							<div class="front"><span></span></div>
+						</div>
 					</div>
 				</div>
-				<div class="project ani1">
-					<div class="mask">
-						<div class="back">1</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani2">
-					<div class="mask">
-						<div class="back">5</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani3">
-					<div class="mask">
-						<div class="back">4</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani4">
-					<div class="mask">
-						<div class="back">3</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani5">
-					<div class="mask">
-						<div class="back">8</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani6">
-					<div class="mask">
-						<div class="back">6</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-				<div class="project ani7">
-					<div class="mask">
-						<div class="back">2</div>
-						<div class="front"><span></span></div>
-					</div>
-				</div>
-			</div>
-			<div class="grid-right">
-				<div class="projects">
+				<div class="grid-right">
 					<div class="aniwz">
 						<div class="text">
 							抽奖
@@ -70,48 +31,184 @@
 							游戏
 						</div>
 					</div>
-					<div class="controls">
+					<div class="controls" @click.stop="start">
 						<span class="bottom"></span>
 						<span class="bottom"></span>
 						<span class="bottom"></span>
 						<div class="mask">
 							<div class="text start">
-								<span>开</span>
-								<span>始</span>
+								<span>{{ run ? '重置' : '开始' }}</span>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			
 		</div>
+		<Challenge ref="challenge"></Challenge>
+		<Config ref="config" @on-reset="reset"></Config>
+		<Result ref="result"></Result>
+		<UserList ref="users"></UserList>
+		<RewardList ref="rewards"></RewardList>
+		<span class="copy-right">软件作者：Sordors</span>
 	</div>
 </template>
 
 <script>
+import Names from './Names';
+import UserList from './UserList';
+import Result from './Result';
+import Config from './Config';
+import Challenge from './Challenge';
+import RewardList from './RewardList';
 import bgaudio from '@/assets/before.mp3';
 export default {
+	components: {
+		Names,
+		Challenge,
+		Config,
+		UserList,
+		RewardList,
+		Result
+	},
 	computed: {
 		user() {
 			return this.$store.state.user.data;
 		}
 	},
 	data() {
-		return {};
+		return {
+			list: [
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				},
+				{
+					reward: '',
+					class: ''
+				}
+			],
+			run: false,
+			config: null
+		};
 	},
-	created() {},
-	methods: {}
+	methods: {
+		openResult() {
+			this.$refs.result.open();
+		},
+		reset() {
+			this.config = this.$db.get('config').value();
+		},
+		openRewards() {
+			this.$refs.rewards.open();
+		},
+		openUsers() {
+			this.$refs.users.open();
+		},
+		chooseUser() {
+			this.$refs.challenge.open();
+		},
+		openConfig() {
+			this.$refs.config.open();
+		},
+		delay(index, time, _this) {
+			return new Promise((resolve) => {
+				setTimeout(() => {
+					_this.$set(_this.list[index], 'class', 'ani' + index);
+					resolve();
+				}, time);
+			});
+		},
+		start() {
+			if (!this.run) {
+				const promises = this.list.map(
+					(item, index) =>
+						new Promise((resolve) => {
+							setTimeout(() => {
+								this.$set(this.list[index], 'class', 'ani' + index);
+								resolve();
+							}, index * 300);
+						})
+				);
+				Promise.all(promises).then(() => {
+					this.run = true;
+					this.list.forEach((item, index) => {
+						setTimeout(() => {
+							this.showCard(index);
+						}, index * 300);
+					});
+				});
+			} else {
+				this.list.forEach((item, index) => {
+					item.class = '';
+				});
+				this.run = false;
+			}
+		},
+		showCard(index) {
+			const item = this.list[index];
+			// 使用$set修改对象的某个属性值
+			this.$set(this.list[index], 'class', item.class + ' showli');
+		}
+	}
 };
 </script>
 
 <style lang="scss" scoped>
+.copy-right {
+	position: absolute;
+	bottom: 0;
+	z-index: 99;
+	font-size: 14px;
+	right: 0;
+	left: 0;
+	font-weight: bold;
+	text-align: right;
+	color: #000;
+	padding-right: 5px;
+	height: 20px;
+	line-height: 20px;
+}
 .main {
 	height: 100%;
 	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
+	position: relative;
+	//background: #67c23a;
+	background-image: linear-gradient(45deg, #67c23a 25%, transparent 25%, transparent 75%, #67c23a 75%, #67c23a),
+		linear-gradient(45deg, #67c23a 25%, transparent 25%, transparent 75%, #67c23a 75%, #67c23a);
+	background-size: 100px 100px; /* 条纹的大小 */
+	background-position: 0 0, 50px 50px; /* 交错的条纹 */
 	.card-header {
 		position: absolute;
 		left: 0;
@@ -157,140 +254,184 @@ export default {
 		}
 	}
 }
-
-.grid {
-	margin-top: 50px;
-	position: relative;
-	width: 100%;
+.content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	height: 100%;
-	padding: 20px;
+	width: 100%;
+	padding: 140px 20px 20px 20px;
+}
+.grid {
+	position: relative;
+	height: 100%;
+	width: 1125px;
+	display: flex;
 	.grid-left {
-		width: 1050px;
 		.project {
-			float: left;
-			width: 222px;
-			height: 311px;
+			width: 180px;
+			height: 253px;
+			position: absolute;
+			top: 273px;
+			left: 950px;
+			.front {
+				width: 100%;
+				height: 100%;
+				background: url('../assets/card/project_front_bg.png') round;
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 180px;
+				height: 253px;
+				padding: 0 16px;
+				text-align: center;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.back {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 180px;
+				height: 253px;
+				padding: 0 16px;
+				text-align: center;
+				background: url('../assets/card/project_back_bg.png') round;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #fff;
+				font-size: 26px;
+			}
+		}
+	}
+	.grid-right {
+		width: 180px;
+		position: absolute;
+		left: 950px;
+		top: 0 !important;
+		.aniwz {
+			height: 253px;
+			width: 180px;
+			text-align: center;
+			font-size: 32px;
+			.text {
+				padding-top: 110px;
+			}
+		}
+		.controls {
+			height: 253px;
+			width: 180px;
+			position: relative;
+			cursor: pointer;
+			.mask {
+				position: absolute;
+				background: url('../assets/card/project_card_bg.png') round;
+				width: 180px;
+				height: 100%;
+				overflow: hidden;
+				text-align: center;
+				font-size: 32px;
+				top: 0;
+			}
+			.text {
+				padding-top: 110px;
+			}
+			.bottom {
+				background: url('../assets/card/project_card_bot_bg.png') round;
+				position: absolute;
+				bottom: -6px;
+				right: 0;
+				width: 180px;
+				height: 66px;
+				-webkit-transition: all 0.3s ease;
+				-moz-transition: all 0.3s ease;
+				-o-transition: all 0.3s ease;
+				-ms-transition: all 0.3s ease;
+				transition: all 0.3s ease;
+			}
 		}
 	}
 }
 
-.project {
-	float: left;
-	width: 222px;
-	height: 311px;
+.controls .bottom + .bottom + .bottom {
+	bottom: -2px;
 }
 
-.projects {
-	.controls {
-		position: absolute;
-		right: 0;
-		bottom: 15px;
-		float: left;
-		width: 222px;
-		height: 311px;
-	}
+.controls .bottom + .bottom {
+	bottom: -4px;
 }
 
-.controls .mask:hover,
-.project:hover {
-	cursor: pointer;
-}
-
-.controls .mask {
-	float: left;
-	position: relative;
-	background: url('../assets/card/project_card_bg.png') no-repeat;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	text-align: center;
-	font-size: 32px;
-}
-
-.projects .controls .bottom {
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
-	-ms-transition: all 0.3s ease;
-	transition: all 0.3s ease;
-}
-
-.projects .controls .bottom {
-	background: url('../assets/card/project_card_bot_bg.png') no-repeat;
-	position: absolute;
-	bottom: -9px;
-	right: 0;
-	width: 222px;
-	height: 66px;
-}
-
-.projects .controls .bottom + .bottom + .bottom {
-	bottom: -3px;
-}
-
-.projects .controls .bottom + .bottom {
+.controls:hover .bottom + .bottom + .bottom {
 	bottom: -6px;
 }
 
-.projects .controls:hover .bottom + .bottom + .bottom {
-	bottom: -8px;
+.controls:hover .bottom + .bottom {
+	bottom: -10px;
 }
 
-.projects .controls:hover .bottom + .bottom {
-	bottom: -14px;
-}
-
-.projects .controls:hover .bottom {
-	bottom: -20px;
+.controls:hover .bottom {
+	bottom: -12px;
 }
 
 .project.ani0 {
-	right: 948px;
-	bottom: 326px;
+	left: 0px !important;
+	top: 0 !important;
 }
 
 .project.ani1 {
-	right: 711px;
-	bottom: 326px;
+	left: 190px !important;
+	top: 0 !important;
 }
 
 .project.ani2 {
-	right: 474px;
-	bottom: 326px;
+	left: 380px !important;
+	top: 0 !important;
 }
 
 .project.ani3 {
-	right: 237px;
-	bottom: 326px;
+	left: 570px !important;
+	top: 0 !important;
 }
 
 .project.ani4 {
-	right: 948px;
-	bottom: 0;
+	left: 760px !important;
+	top: 0 !important;
 }
 
 .project.ani5 {
-	right: 711px;
-	bottom: 0;
+	left: 0px !important;
+	top: 263px !important;
 }
 
 .project.ani6 {
-	right: 474px;
-	bottom: 0;
+	left: 190px !important;
+	top: 263px !important;
 }
 
 .project.ani7 {
-	right: 237px;
-	bottom: 0;
+	left: 380px !important;
+	top: 263px !important;
+}
+
+.project.ani8 {
+	left: 570px !important;
+	top: 263px !important;
+}
+
+.project.ani9 {
+	left: 760px !important;
+	top: 263px !important;
 }
 
 .project span {
 	display: inline-block;
 	border-radius: 50%;
-	width: 160px;
-	height: 160px;
-	margin-top: 75px;
+	width: 120px;
+	height: 120px;
 }
+
 .project.ani0 span {
 	background: #ef4036;
 }
@@ -316,73 +457,14 @@ export default {
 	background: #000000;
 }
 
-.aniwz {
-	width: 222px;
-	height: 311px;
-	position: absolute;
-	right: 0;
-	bottom: 326px;
-	margin: 0 0 15px 15px;
-	text-align: center;
-	font-size: 32px;
-}
-.text {
-	padding-top: 110px;
-}
-.start {
-	padding-top: 130px;
-}
-.project .front {
-	background: url('../assets/card/project_front_bg.png') no-repeat;
-	display: table;
-}
-.project .back,
-.project .front {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-.project .back {
-	background: url('../assets/card/project_back_bg.png') no-repeat;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: -webkit-flex;
-	display: flex;
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	-webkit-justify-content: center;
-	justify-content: center;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	-webkit-align-items: center;
-	align-items: center;
-	color: #fff;
-	font-size: 42px;
-}
-.project .back,
-.project .front {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 222px;
-	height: 311px;
-	padding: 0 16px;
-	text-align: center;
+.project.ani8 span {
+	background: #f56c6c;
 }
 
-.project,
-.project .back,
-.project .front,
-.socials a,
-.transform_holder .back,
-.transform_holder .front,
-.transform_holder .transform {
-	-webkit-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-	-moz-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-	-o-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-	-ms-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-	transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+.project.ani9 span {
+	background: #67c23a;
 }
+
 .project {
 	-webkit-perspective: 1000;
 	-moz-perspective: 1000;
@@ -418,14 +500,24 @@ export default {
 	-ms-transform: rotateY(180deg);
 	transform: rotateY(180deg);
 }
-.project.hover .front,
+
+.project,
+.project .back,
+.project .front {
+	-webkit-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+	-moz-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+	-o-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+	-ms-transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+	transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 .project.showli .front {
 	-webkit-transform: rotateY(180deg);
 	-moz-transform: rotateY(180deg);
 	-o-transform: rotateY(180deg);
 	transform: rotateY(180deg);
 }
-.project.hover .back,
+
 .project.showli .back {
 	-webkit-transform: rotateY(0deg);
 	-moz-transform: rotateY(0deg);

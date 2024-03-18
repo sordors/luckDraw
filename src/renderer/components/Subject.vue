@@ -9,7 +9,7 @@
 			<div class="header-right">
 				<div class="rank">{{ first ? '当前NO.1 ' + first : '' }}</div>
 				<el-button class="header-btn btn-4" type="text" @click="openTop()">TOP排行榜</el-button>
-				<el-button class="header-btn btn-3" type="text" @click="openNames()">名单配置</el-button>
+				<el-button class="header-btn btn-3" type="text" @click="openUsers()">名单配置</el-button>
 				<el-button class="header-btn btn-2" type="text" @click="openSubject()">题库配置</el-button>
 				<el-button class="header-btn btn-1" type="text" @click="openConfig()">系统配置</el-button>
 			</div>
@@ -47,7 +47,8 @@
 				</div>
 			</div>
 		</div>
-		<Names ref="names"></Names>
+		<UserList ref="users"></UserList>
+		<Challenge ref="challenge"></Challenge>
 		<Config ref="config" @on-reset="reset"></Config>
 		<SubjectDb ref="subjectDb" @on-reset="resetSubject"></SubjectDb>
 		<Challenge ref="challenge" @on-success="showTime"></Challenge>
@@ -62,18 +63,18 @@
 </template>
 
 <script>
-	import Names from './Names';
+	import UserList from './UserList';
+	import Challenge from './Challenge';
 	import Config from './Config';
 	import SubjectDb from './SubjectDb';
-	import Challenge from './Challenge';
 	import Rank from './Rank';
 	import bgaudio from '@/assets/before.mp3';
 	export default {
 		components: {
-			Names,
+			UserList,
+			Challenge,
 			Config,
 			SubjectDb,
-			Challenge,
 			Rank
 		},
 		computed: {
@@ -126,6 +127,9 @@
 			}
 		},
 		methods: {
+			chooseUser() {
+				this.$refs.challenge.open();
+			},
 			playHandler() {
 				this.voice = true;
 			},
@@ -174,8 +178,8 @@
 			openTop() {
 				this.$refs.rank.open();
 			},
-			openNames() {
-				this.$refs.names.open();
+			openUsers() {
+				this.$refs.users.open();
 			},
 			openConfig() {
 				this.$refs.config.open();
