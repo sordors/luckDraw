@@ -54,8 +54,8 @@
 		</audio>
 		<span class="copy-right">软件作者：Sordors</span>
 		<Config ref="config" @on-reset="reset"></Config>
-		<UserList ref="users"></UserList>
-		<RewardList ref="rewards"></RewardList>
+		<UserList ref="users" @on-reset="reset"></UserList>
+		<RewardList ref="rewards" @on-reset="reset"></RewardList>
 		<Result ref="result" @on-reset="reset"></Result>
 		<Challenge ref="challenge" @on-success="onChooseUser"></Challenge>
 

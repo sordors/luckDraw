@@ -39,6 +39,11 @@ export default {
 			result: []
 		};
 	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
+	},
 	methods: {
 		saveData(){
 			let listStr = '';
@@ -107,7 +112,7 @@ export default {
 						});
 					}
 					this.$db.set('users', list).write();
-
+					this.$emit('on-reset',{});
 					this.result = list;
 				};
 				reader.readAsText(file);
@@ -119,6 +124,7 @@ export default {
 		reset(e) {
 			console.log('reset');
 			this.result = this.$db.get('users').value();
+			this.$emit('on-reset',{});
 		},
 		open() {
 			this.visible = true;
@@ -136,6 +142,14 @@ export default {
 				type: 'success'
 			});
 			this.result = this.$db.get('users').value();
+			let _this = this;
+			//修改当前用户积分，如果有用户的情况下
+			if (_this.user && newIntegral > 0 && _this.user.id >= id) {
+				//更新当前用户信息
+				let user = Object.assign({}, _this.user);
+				user.integral = newIntegral;
+				this.$store.commit('ADD_USER', user);
+			}
 		}
 	}
 };

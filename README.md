@@ -1,7 +1,11 @@
 # 课堂小游戏
 
-> 随机点名,随机抽奖，随机点名+抽奖，扭蛋抽奖，开宝箱抽奖
+> 随机点名，随机抽奖，随机点名抽奖，扭蛋抽奖，开宝箱抽奖，炫酷抽奖，十连抽，趣味竞赛
 
+## 版本说明
+- 当前版本为V3.0.0，由网友赞助开发，万分感谢！！
+- 该版本增加积分和十连抽的玩法以及可以指定用户
+- 若未指定用户则为全局抽奖，不扣除用户积分，指定用户则扣除对应积分
 
 ## 项目说明
 
@@ -13,12 +17,21 @@
 
 - 项目使用electron-vue搭建的，用lowdb存储数据的
 
+## 自定义背景 + 背景音乐
+- 打完包的软件，可在 resources\app\dist\electron 目录下自行修改背景或者音乐
+- 趣味竞赛需导入题库，打包的软件有附带，如丢失，可在doc目录下载
+
 ## 效果图
 
 ![Alt](doc/1.png)
 ![Alt](doc/2.png)
+![Alt](doc/3.png)
+![Alt](doc/4.png)
 ![Alt](doc/5.png)
+![Alt](doc/6.png)
 ![Alt](doc/7.png)
+![Alt](doc/8.png)
+![Alt](doc/9.png)
 
 ## 如何构建项目
 
@@ -30,7 +43,7 @@ npm install or yarn install
 npm run dev or yarn run dev
 
 # build electron application for production
-npm run build or yran build
+npm run build:dir or yran build:dir
 
 ```
 

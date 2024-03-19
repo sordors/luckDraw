@@ -52,8 +52,8 @@
 		<Config ref="config" @on-reset="reset"></Config>
 		<Result ref="result"></Result>
 		<UserList ref="users"></UserList>
-		<RewardList ref="rewards"></RewardList>
-		<BaseRewards ref="basereward"></BaseRewards>
+		<RewardList ref="rewards" @on-reset="init"></RewardList>
+		<BaseRewards ref="basereward" @on-reset="init"></BaseRewards>
 		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none">
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签

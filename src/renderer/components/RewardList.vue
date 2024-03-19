@@ -109,6 +109,7 @@ export default {
 					this.$db.set('rewards', list).write();
 
 					this.result = list;
+					this.$emit('on-reset',{});
 				};
 				reader.readAsText(file);
 			}
@@ -136,6 +137,7 @@ export default {
 				type: 'success'
 			});
 			this.result = this.$db.get('rewards').value();
+			this.$emit('on-reset',{});
 		}
 	}
 };

@@ -1,6 +1,7 @@
 import {
 	app,
-	BrowserWindow
+	BrowserWindow,
+	Menu
 } from 'electron'
 //import '../renderer/store'
 
@@ -18,6 +19,11 @@ const winURL = process.env.NODE_ENV === 'development' ?
 	`file://${__dirname}/index.html`
 
 function createWindow() {
+	if(process.env.NODE_ENV !== 'development'){
+		const menu = Menu.buildFromTemplate([])
+		Menu.setApplicationMenu(menu);
+	}
+	
 	/**
 	 * Initial window options
 	 */
