@@ -126,7 +126,8 @@
 						RollCallReward: [],
 						RollReward: [],
 						Gashapon: [],
-						RollBall: []
+						RollBall: [],
+						CardReward: []
 					})
 					.write();
 			}

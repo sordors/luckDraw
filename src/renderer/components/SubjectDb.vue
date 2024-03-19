@@ -134,6 +134,7 @@ export default {
 	width: 160px;
 	position: relative;
 	overflow: hidden;
+	cursor: pointer;
 }
 .file {
 	position: absolute;

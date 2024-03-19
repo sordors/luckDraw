@@ -13,7 +13,7 @@
     {
       "key": 3,
       "name": "王五",
-      "integral": 13
+      "integral": 6
     },
     {
       "key": 4,
@@ -57,13 +57,15 @@
     "roll_call_rate": "100",
     "card_no_rewrad": "3",
     "card_base_rewrad": "1",
-    "card_base_integral": "10"
+    "card_base_integral": "1",
+    "card_mini_rewrad": "1",
+    "card_max_rewrad": "4"
   },
   "rewards": [
     {
       "key": 1,
       "name": "电动牙刷",
-      "num": 1
+      "num": 0
     },
     {
       "key": 2,
@@ -73,32 +75,32 @@
     {
       "key": 3,
       "name": "高品质不锈钢保温杯",
-      "num": 2
+      "num": 0
     },
     {
       "key": 4,
       "name": "书籍《如何高效学习》",
-      "num": 1
+      "num": 0
     },
     {
       "key": 5,
       "name": "蓝牙耳机",
-      "num": 2
+      "num": 0
     },
     {
       "key": 6,
       "name": "可折叠休闲椅",
-      "num": 2
+      "num": 0
     },
     {
       "key": 7,
       "name": "优质记事本套装",
-      "num": 1
+      "num": 0
     },
     {
       "key": 8,
       "name": "儿童拼图玩具",
-      "num": 2
+      "num": 0
     },
     {
       "key": 9,
@@ -217,7 +219,8 @@
     "RollCallReward": [],
     "RollReward": [],
     "Gashapon": [],
-    "RollBall": []
+    "RollBall": [],
+    "CardReward": []
   },
   "rank": [
     {
@@ -246,5 +249,10 @@
       "ranking": 5
     }
   ],
-  "base_rewards": []
+  "base_rewards": [
+    {
+      "key": 1,
+      "name": "测试保底"
+    }
+  ]
 }

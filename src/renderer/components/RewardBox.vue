@@ -144,12 +144,26 @@
 								num: currentRewards.num - 1
 							})
 							.write();
-
+						
 						_this.init();
 					} else {
 						this.desc = '😭咦？没有抽中？';
 					}
-
+					
+					//扣除当前用户积分，如果有用户的情况下
+					if (_this.user && integral > 0 && _this.user.integral >= integral) {
+						let newIntegral = parseInt(_this.user.integral) - parseInt(integral);
+						this.$db.get('users').find({
+							key: _this.user.key
+						}).assign({
+							integral: newIntegral
+						}).write();
+						//更新当前用户信息
+						let user = Object.assign({}, _this.user);
+						user.integral = newIntegral;
+						this.$store.commit('ADD_USER', user);
+					}
+					
 					_this.dialogVisible = true;
 				}, 1000);
 

@@ -42,7 +42,8 @@ db.defaults({
 		"box_rate": 100,
 		"cool_integral": 0,
 		"cool_rate": 100,
-		"card_no_rewrad": 1,
+		"card_mini_rewrad": 1,
+		"card_max_rewrad": 1,
 		"card_base_rewrad": 1,
 		"card_base_integral": 0
 	},
@@ -63,6 +64,12 @@ db.defaults({
 subjectDb.defaults({
 	data: []
 }).write()
+
+// 主进程 ->  main.js
+
+// .... ohter code
+// ... 在主进程注册我们封装后的 SaveFile 方法
+
 
 /* eslint-disable no-new */
 new Vue({

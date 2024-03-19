@@ -35,9 +35,11 @@
 						:step="1"></el-input></el-form-item>
 				<el-form-item label="炫酷抽奖(中奖率)"><el-input type="number" v-model="config.cool_rate" :min="0"
 						:step="1"></el-input></el-form-item>
-				<el-form-item label="十连抽(最多未中奖次数,PS:随机1到最多为中奖次数区间)"><el-input type="number"
-						v-model="config.card_no_rewrad" :min="0" :step="1"></el-input></el-form-item>
-				<el-form-item label="十连抽(保底中奖次数)"><el-input type="number" v-model="config.card_base_rewrad" :min="0"
+				<el-form-item label="十连抽(最小抽中奖池奖品次数)"><el-input type="number"
+						v-model="config.card_mini_rewrad" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="十连抽(最大抽中奖池奖品次数)"><el-input type="number"
+						v-model="config.card_max_rewrad" :min="0" :step="1"></el-input></el-form-item>
+				<el-form-item label="十连抽(保底奖励抽中次数)"><el-input type="number" v-model="config.card_base_rewrad" :min="0"
 						:step="1"></el-input></el-form-item>
 				<el-form-item label="十连抽(扣除积分)"><el-input type="number" v-model="config.card_base_integral" :min="0"
 						:step="1"></el-input></el-form-item>
@@ -67,7 +69,8 @@
 					box_rate: 100,
 					cool_integral: 0,
 					cool_rate: 100,
-					card_no_rewrad: 1,
+					card_mini_rewrad: 1,
+					card_max_rewrad: 1,
 					card_base_rewrad: 1,
 					card_base_integral: 0
 				}

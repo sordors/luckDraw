@@ -32,7 +32,8 @@ export default {
 				RollCallReward: '点名抽奖',
 				RollCall: '随机点名',
 				RollReward: '随机抽奖',
-				RollBall: '炫酷抽奖'
+				RollBall: '炫酷抽奖',
+				CardReward: '十连抽'
 			}
 		};
 	},
@@ -40,6 +41,7 @@ export default {
 		open() {
 			this.visible = true;
 			this.result = this.$db.get('result').value();
+			console.log(this.result);
 		},
 		close() {
 			this.visible = false;
@@ -52,7 +54,8 @@ export default {
 					RollCallReward: [],
 					RollReward: [],
 					Gashapon: [],
-					RollBall: []
+					RollBall: [],
+					CardReward: []
 				})
 				.write();
 
