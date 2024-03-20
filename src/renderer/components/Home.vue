@@ -4,7 +4,7 @@
 			<div class="header">
 				<div class="header-left">
 					<el-button class="user-btn" type="text" @click="chooseUser()">
-						{{ user ? '姓名：' + user.name + ',积分：' + user.integral + '，点击重选' : '选择用户' }}
+						{{ user ? '姓名：' + user.name + '，'+ (config && config.integral_nikcname ? config.integral_nikcname : '积分') +'：' + user.integral + '，点击重选' : '选择用户' }}
 					</el-button>
 				</div>
 				<div class="header-right">
@@ -16,30 +16,43 @@
 				</div>
 			</div>
 
-
 			<div class="main-content" v-show="mode == 0">
 				<div style="width: 608px">
-					<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">随机抽奖</el-button>
+					<el-button class="mode-btn blue" type="primary" @click="changeMode(1)">
+						随机抽奖
+						<span v-if="user && config && config.integral_nikcname && config.roll_integral > 0">({{ config.roll_integral + config.integral_nikcname }})</span>
+					</el-button>
 					<el-button class="mode-btn pink" type="primary" @click="changeMode(2)">随机点名</el-button>
 				</div>
 				<div style="width: 608px">
 					<el-button class="mode-btn green" type="primary" @click="changeMode(3)">点名抽奖</el-button>
-					<el-button class="mode-btn yellow" type="primary" @click="changeMode(4)">扭一下蛋</el-button>
+					<el-button class="mode-btn yellow" type="primary" @click="changeMode(4)">
+						扭一下蛋
+						<span v-if="user && config && config.integral_nikcname && config.egg_integral > 0">({{ config.egg_integral + config.integral_nikcname }})</span>
+					</el-button>
 				</div>
 				<div style="width: 608px">
-					<el-button class="mode-btn red" type="primary" @click="changeMode(5)">开个箱吧</el-button>
-					<el-button class="mode-btn blue-2" type="primary" @click="changeMode(6)">炫酷抽奖</el-button>
+					<el-button class="mode-btn red" type="primary" @click="changeMode(5)">
+						开个箱吧
+						<span v-if="user && config && config.integral_nikcname && config.box_integral > 0">({{ config.box_integral + config.integral_nikcname }})</span>
+					</el-button>
+					<el-button class="mode-btn blue-2" type="primary" @click="changeMode(6)">
+						炫酷抽奖
+						<span v-if="user && config && config.integral_nikcname && config.cool_integral > 0">({{ config.cool_integral + config.integral_nikcname }})</span>
+					</el-button>
 				</div>
-				<div style="width: 608px"><el-button class="mode-btn pink-2" type="primary"
-						@click="gotoCard()">十连抽</el-button></div>
-				<div style="width: 608px"><el-button class="mode-btn orange" type="primary"
-						@click="gotoSubject()">趣味竞赛</el-button></div>
+				<div style="width: 608px">
+					<el-button class="mode-btn pink-2" type="primary" @click="gotoCard()">
+						十连抽
+						<span v-if="user && config && config.integral_nikcname && config.card_base_integral > 0">({{ config.card_base_integral + config.integral_nikcname }})</span>
+					</el-button>
+				</div>
+				<div style="width: 608px"><el-button class="mode-btn orange" type="primary" @click="gotoSubject()">趣味竞赛</el-button></div>
 			</div>
 			<div class="main-content" v-show="mode != 0">
 				<RollReward ref="rollreward" v-if="mode == 1" @on-close="backHome" @on-run="runTask"></RollReward>
 				<RollCall ref="rollcall" v-if="mode == 2" @on-close="backHome" @on-run="runTask"></RollCall>
-				<RollCallReward ref="rollcallreward" v-if="mode == 3" @on-close="backHome" @on-run="runTask">
-				</RollCallReward>
+				<RollCallReward ref="rollcallreward" v-if="mode == 3" @on-close="backHome" @on-run="runTask"></RollCallReward>
 				<Gashapon ref="gashapon" v-if="mode == 4" @on-close="backHome" @on-run="runTask"></Gashapon>
 				<RewardBox ref="rewardbox" v-if="mode == 5" @on-close="backHome" @on-run="runTask"></RewardBox>
 				<RollBall ref="rewardball" v-if="mode == 6" @on-close="backHome" @on-run="runTask"></RollBall>
@@ -47,13 +60,12 @@
 			<img src="../assets/voice_close.png" class="voice" @click="voiceChage(true)" v-if="!voice" />
 			<img src="../assets/voice_open.png" class="voice" @click="voiceChage(false)" v-if="voice" />
 		</div>
-		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler"
-			style="display: none">
+		<audio id="audiobg" preload="auto" controls autoplay loop @play="playHandler" @pause="pauseHandler" style="display: none">
 			<source :src="audioSrc" />
 			你的浏览器不支持audio标签
 		</audio>
 		<span class="copy-right">软件作者：Sordors</span>
-		<Config ref="config" @on-reset="reset"></Config>
+		<Config ref="config" @on-reset="resetConfig"></Config>
 		<UserList ref="users" @on-reset="reset"></UserList>
 		<RewardList ref="rewards" @on-reset="reset"></RewardList>
 		<Result ref="result" @on-reset="reset"></Result>
@@ -74,366 +86,370 @@
 </template>
 
 <script>
-	import UserList from './UserList';
-	import Config from './Config';
-	import RewardList from './RewardList';
-	import Result from './Result';
-	import RollCall from './RollCall';
-	import RollReward from './RollReward';
-	import RollCallReward from './RollCallReward';
-	import Gashapon from './Gashapon';
-	import Challenge from './Challenge';
-	import RewardBox from './RewardBox';
-	import RollBall from './RollBall';
-	import bgaudio from '@/assets/before.mp3';
-	import beginaudio from '@/assets/start.mp3';
+import UserList from './UserList';
+import Config from './Config';
+import RewardList from './RewardList';
+import Result from './Result';
+import RollCall from './RollCall';
+import RollReward from './RollReward';
+import RollCallReward from './RollCallReward';
+import Gashapon from './Gashapon';
+import Challenge from './Challenge';
+import RewardBox from './RewardBox';
+import RollBall from './RollBall';
+import bgaudio from '@/assets/before.mp3';
+import beginaudio from '@/assets/start.mp3';
 
-	export default {
-		components: {
-			Config,
-			Challenge,
-			UserList,
-			RewardList,
-			RollCall,
-			RollReward,
-			RollCallReward,
-			Gashapon,
-			RewardBox,
-			Result,
-			RollBall
+export default {
+	components: {
+		Config,
+		Challenge,
+		UserList,
+		RewardList,
+		RollCall,
+		RollReward,
+		RollCallReward,
+		Gashapon,
+		RewardBox,
+		Result,
+		RollBall
+	},
+	data() {
+		return {
+			mode: 0,
+			voice: false,
+			audioSrc: bgaudio,
+			introduce: false,
+			config: null
+		};
+	},
+	computed: {
+		user() {
+			return this.$store.state.user.data;
+		}
+	},
+	mounted() {
+		this.config = this.$db.get('config').value();
+		if (this.config.refresh == 1) {
+			this.$db
+				.set('result', {
+					RewardBox: [],
+					RollCall: [],
+					RollCallReward: [],
+					RollReward: [],
+					Gashapon: [],
+					RollBall: [],
+					CardReward: []
+				})
+				.write();
+		}
+
+		this.voiceChage(false);
+	},
+	methods: {
+		chooseUser() {
+			this.$refs.challenge.open();
 		},
-		data() {
-			return {
-				mode: 0,
-				voice: false,
-				audioSrc: bgaudio,
-				introduce: false
-			};
+		onChooseUser() {
+			console.log(this.$store);
 		},
-		computed: {
-			user() {
-				return this.$store.state.user.data;
+		playHandler() {
+			this.voice = true;
+		},
+		pauseHandler() {
+			this.voice = false;
+		},
+		voiceChage(state) {
+			this.voice = state;
+			if (state) {
+				this.$el.querySelector('#audiobg').play();
+			} else {
+				this.$el.querySelector('#audiobg').pause();
 			}
 		},
-		mounted() {
-			console.log(this.$store.state.user);
-			let config = this.$db.get('config').value();
-			if (config.refresh == 1) {
-				this.$db
-					.set('result', {
-						RewardBox: [],
-						RollCall: [],
-						RollCallReward: [],
-						RollReward: [],
-						Gashapon: [],
-						RollBall: [],
-						CardReward: []
-					})
-					.write();
-			}
-
-			this.voiceChage(false);
-		},
-		methods: {
-			chooseUser() {
-				this.$refs.challenge.open();
-			},
-			onChooseUser() {
-				console.log(this.$store);
-			},
-			playHandler() {
-				this.voice = true;
-			},
-			pauseHandler() {
-				this.voice = false;
-			},
-			voiceChage(state) {
-				this.voice = state;
-				if (state) {
-					this.$el.querySelector('#audiobg').play();
-				} else {
-					this.$el.querySelector('#audiobg').pause();
-				}
-			},
-			loadAudio() {
-				if (this.voice) {
-					this.$el.querySelector('#audiobg').load();
-					this.$nextTick(() => {
-						this.$el.querySelector('#audiobg').play();
-					});
-				} else {
-					this.$el.querySelector('#audiobg').load();
-					this.$nextTick(() => {
-						this.$el.querySelector('#audiobg').pause();
-					});
-				}
-			},
-			openConfig() {
-				this.$refs.config.open();
-			},
-			openUsers() {
-				this.$refs.users.open();
-			},
-			openRewards() {
-				this.$refs.rewards.open();
-			},
-			openResult() {
-				this.$refs.result.open();
-			},
-			openSubject() {
-				this.$refs.subjectDb.open();
-			},
-			gotoSubject() {
-				this.$router.push({
-					path: 'subject'
-				});
-			},
-			gotoCard() {
-				this.$router.push({
-					path: 'card'
-				});
-			},
-			changeMode(mode) {
-				this.mode = mode;
+		loadAudio() {
+			if (this.voice) {
+				this.$el.querySelector('#audiobg').load();
 				this.$nextTick(() => {
-					if (mode == 1) {
-						this.$refs.rollreward.init();
-					}
-					if (mode == 2) {
-						this.$refs.rollcall.init();
-					}
-					if (mode == 3) {
-						this.$refs.rollcallreward.init();
-					}
-					if (mode == 4) {
-						this.$refs.gashapon.init();
-					}
-					if (mode == 5) {
-						this.$refs.rewardbox.init();
-					}
-					if (mode == 6) {
-						this.$refs.rewardball.init();
-					}
+					this.$el.querySelector('#audiobg').play();
 				});
-			},
-			runTask(state) {
-				if (state) {
-					if (this.audioSrc != beginaudio) {
-						this.audioSrc = beginaudio;
-						this.loadAudio();
-					}
-				} else {
-					if (this.audioSrc != bgaudio) {
-						this.audioSrc = bgaudio;
-						this.loadAudio();
-					}
+			} else {
+				this.$el.querySelector('#audiobg').load();
+				this.$nextTick(() => {
+					this.$el.querySelector('#audiobg').pause();
+				});
+			}
+		},
+		openConfig() {
+			this.$refs.config.open();
+		},
+		openUsers() {
+			this.$refs.users.open();
+		},
+		openRewards() {
+			this.$refs.rewards.open();
+		},
+		openResult() {
+			this.$refs.result.open();
+		},
+		openSubject() {
+			this.$refs.subjectDb.open();
+		},
+		gotoSubject() {
+			this.$router.push({
+				path: 'subject'
+			});
+		},
+		gotoCard() {
+			this.$router.push({
+				path: 'card'
+			});
+		},
+		changeMode(mode) {
+			this.mode = mode;
+			this.$nextTick(() => {
+				if (mode == 1) {
+					this.$refs.rollreward.init();
 				}
-			},
-			backHome() {
-				this.mode = 0;
+				if (mode == 2) {
+					this.$refs.rollcall.init();
+				}
+				if (mode == 3) {
+					this.$refs.rollcallreward.init();
+				}
+				if (mode == 4) {
+					this.$refs.gashapon.init();
+				}
+				if (mode == 5) {
+					this.$refs.rewardbox.init();
+				}
+				if (mode == 6) {
+					this.$refs.rewardball.init();
+				}
+			});
+		},
+		runTask(state) {
+			if (state) {
+				if (this.audioSrc != beginaudio) {
+					this.audioSrc = beginaudio;
+					this.loadAudio();
+				}
+			} else {
 				if (this.audioSrc != bgaudio) {
 					this.audioSrc = bgaudio;
 					this.loadAudio();
 				}
-			},
-			reset() {
-				this.$nextTick(() => {
-					if (this.mode == 1) {
-						this.$refs.rollreward.init();
-					}
-
-					if (this.mode == 2) {
-						this.$refs.rollcall.init();
-					}
-
-					if (this.mode == 3) {
-						this.$refs.rollcallreward.init();
-					}
-
-					if (this.mode == 4) {
-						this.$refs.gashapon.init();
-					}
-
-					if (this.mode == 5) {
-						this.$refs.rewardbox.init();
-					}
-
-					if (this.mode == 6) {
-						this.$refs.rewardball.init();
-					}
-				});
 			}
+		},
+		backHome() {
+			this.mode = 0;
+			if (this.audioSrc != bgaudio) {
+				this.audioSrc = bgaudio;
+				this.loadAudio();
+			}
+		},
+		resetConfig() {
+			this.config = this.$db.get('config').value();
+			this.reset();
+		},
+		reset() {
+			this.$nextTick(() => {
+				if (this.mode == 1) {
+					this.$refs.rollreward.init();
+				}
+
+				if (this.mode == 2) {
+					this.$refs.rollcall.init();
+				}
+
+				if (this.mode == 3) {
+					this.$refs.rollcallreward.init();
+				}
+
+				if (this.mode == 4) {
+					this.$refs.gashapon.init();
+				}
+
+				if (this.mode == 5) {
+					this.$refs.rewardbox.init();
+				}
+
+				if (this.mode == 6) {
+					this.$refs.rewardball.init();
+				}
+			});
 		}
-	};
+	}
+};
 </script>
 
 <style lang="scss" scoped>
-	.home {
-		height: 100%;
-		width: 100%;
-	}
+.home {
+	height: 100%;
+	width: 100%;
+}
 
-	.voice {
-		position: absolute;
-		top: 180px;
-		right: 15px;
-		height: 40px;
-		cursor: pointer;
-	}
+.voice {
+	position: absolute;
+	top: 180px;
+	right: 15px;
+	height: 40px;
+	cursor: pointer;
+}
 
-	.header {
-		height: 50px;
-		line-height: 50px;
-		position: relative;
+.header {
+	height: 50px;
+	line-height: 50px;
+	position: relative;
+	display: flex;
+	width: 100%;
+	padding: 0 20px;
+
+	.header-right {
+		justify-content: center;
+		align-items: center;
+		flex: 1;
 		display: flex;
-		width: 100%;
-		padding: 0 20px;
-
-		.header-right {
-			justify-content: center;
-			align-items: center;
-			flex: 1;
-			display: flex;
-			justify-content: flex-end;
-
-			.header-btn {
-				padding: 0;
-				z-index: 99;
-				color: #000;
-				font-weight: bold;
-				width: 80px;
-				font-size: 16px;
-			}
-		}
-
-		.header-left {
-			width: 200px;
-			display: flex;
-
-			.user-btn {
-				padding: 0;
-				color: #f10000;
-				font-weight: bold;
-				cursor: pointer;
-				z-index: 99;
-				width: 200px;
-				text-align: left;
-				font-size: 16px;
-			}
-		}
-	}
-
-	.draw {
-		height: 100%;
-		position: relative;
-		background-image: url('../assets/bg.jpg');
-		background-size: 100% 100%;
-		background-position: center center;
-		background-repeat: no-repeat;
-		background-color: #121936;
-
-		.mask {
-			-webkit-filter: blur(5px);
-			filter: blur(5px);
-		}
-
-		.main-content {
-			position: absolute;
-			top: 0;
-			right: 0;
-			left: 0;
-			bottom: 0;
-			height: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-direction: column;
-
-			.mode-btn {
-				margin-top: 20px;
-				margin-left: 0px;
-				width: 300px;
-				height: 90px;
-				border-radius: 20px;
-				font-size: 22px;
-			}
-
-			.red {
-				background: #f44336;
-				border-color: #f44336;
-			}
-
-			.pink {
-				background: #ff4f7d;
-				border-color: #ff4f7d;
-			}
-
-			.blue {
-				background: #2db7f5;
-				border-color: #2db7f5;
-			}
-
-			.green {
-				background: #19be6b;
-				border-color: #19be6b;
-			}
-
-			.yellow {
-				background: #fdd865;
-				border-color: #fdd865;
-			}
-
-			.orange {
-				background: #fe9500;
-				border-color: #fe9500;
-				width: 100%;
-			}
-
-			.pink-2 {
-				background: #f56c6c;
-				border-color: #f56c6c;
-				width: 100%;
-			}
-
-			.blue-2 {
-				background: #2196f3;
-				border-color: #2196f3;
-			}
-		}
-	}
-
-	.newBackGroup {
-		background-image: url('../assets/bg2.jpeg') !important;
+		justify-content: flex-end;
 
 		.header-btn {
-			color: #ffffff !important;
+			padding: 0;
+			z-index: 99;
+			color: #000;
+			font-weight: bold;
+			width: 80px;
+			font-size: 16px;
 		}
+	}
+
+	.header-left {
+		width: 200px;
+		display: flex;
 
 		.user-btn {
-			color: #00f735 !important;
+			padding: 0;
+			color: #f10000;
+			font-weight: bold;
+			cursor: pointer;
+			z-index: 99;
+			width: 200px;
+			text-align: left;
+			font-size: 16px;
 		}
 	}
+}
 
-	.copy-right {
+.draw {
+	height: 100%;
+	position: relative;
+	background-image: url('../assets/bg.jpg');
+	background-size: 100% 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: #121936;
+
+	.mask {
+		-webkit-filter: blur(5px);
+		filter: blur(5px);
+	}
+
+	.main-content {
 		position: absolute;
-		bottom: 0;
-		z-index: 99;
-		font-size: 14px;
+		top: 0;
 		right: 0;
 		left: 0;
-		font-weight: bold;
-		text-align: right;
-		color: #000;
-		padding-right: 5px;
-		height: 20px;
-		line-height: 20px;
+		bottom: 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+
+		.mode-btn {
+			margin-top: 20px;
+			margin-left: 0px;
+			width: 300px;
+			height: 90px;
+			border-radius: 20px;
+			font-size: 22px;
+		}
+
+		.red {
+			background: #f44336;
+			border-color: #f44336;
+		}
+
+		.pink {
+			background: #ff4f7d;
+			border-color: #ff4f7d;
+		}
+
+		.blue {
+			background: #2db7f5;
+			border-color: #2db7f5;
+		}
+
+		.green {
+			background: #19be6b;
+			border-color: #19be6b;
+		}
+
+		.yellow {
+			background: #fdd865;
+			border-color: #fdd865;
+		}
+
+		.orange {
+			background: #fe9500;
+			border-color: #fe9500;
+			width: 100%;
+		}
+
+		.pink-2 {
+			background: #f56c6c;
+			border-color: #f56c6c;
+			width: 100%;
+		}
+
+		.blue-2 {
+			background: #2196f3;
+			border-color: #2196f3;
+		}
+	}
+}
+
+.newBackGroup {
+	background-image: url('../assets/bg2.jpeg') !important;
+
+	.header-btn {
+		color: #ffffff !important;
 	}
 
-	.introduce {
-		height: 350px;
-		font-size: 16px;
-		line-height: 30px;
-		color: #000;
-		font-weight: bold;
+	.user-btn {
+		color: #00f735 !important;
 	}
+}
+
+.copy-right {
+	position: absolute;
+	bottom: 0;
+	z-index: 99;
+	font-size: 14px;
+	right: 0;
+	left: 0;
+	font-weight: bold;
+	text-align: right;
+	color: #000;
+	padding-right: 5px;
+	height: 20px;
+	line-height: 20px;
+}
+
+.introduce {
+	height: 350px;
+	font-size: 16px;
+	line-height: 30px;
+	color: #000;
+	font-weight: bold;
+}
 </style>

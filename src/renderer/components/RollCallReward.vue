@@ -1,8 +1,8 @@
 <template>
 	<div class="rollcall">
 		<img src="../assets/back.png" class="back" @click="close" />
-		<div class="box">{{ message }}</div>
 		<div class="box-1">{{ rewardMessage }}</div>
+		<div class="box">{{ message }}</div>
 		<el-button class="running-btn" size="mini" @click="start()">{{ title }}</el-button>
 	</div>
 </template>
@@ -35,7 +35,7 @@ export default {
 			this.title = '开始抽奖';
 			this.running = false;
 			this.config = this.$db.get('config').value();
-		
+
 			let users = this.$db.get('users').value();
 			users.forEach((item) => {
 				this.users.push(item.name);
@@ -53,7 +53,7 @@ export default {
 				this.rewardTimer = null;
 			}
 		},
-		initData(){
+		initData() {
 			this.rewards = [];
 			let rewards = this.$db.get('rewards').value();
 			rewards.forEach((item) => {
@@ -100,7 +100,7 @@ export default {
 						let rewardNum = Math.floor(Math.random() * _this.rewards.length);
 						let currentRewards = _this.rewards[rewardNum];
 						_this.rewardMessage = currentRewards.name;
-						
+
 						this.$db
 							.get('result.RollCallReward')
 							.push(_this.message + '抽中' + _this.rewardMessage)
@@ -110,7 +110,7 @@ export default {
 							.find({ key: currentRewards.key })
 							.assign({ num: currentRewards.num - 1 })
 							.write();
-						
+
 						_this.initData();
 					} else {
 						_this.rewardMessage = '未抽中奖品';
@@ -142,24 +142,8 @@ export default {
 		cursor: pointer;
 	}
 	.box {
-		height: 100px;
-		background: #67c23a;
-		font-size: 30px;
-		text-align: center;
-		color: #ffffff;
-		border-radius: 10px;
-		padding: 10px;
-		width: 400px;
-		overflow: hidden;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		line-height: 80px;
-	}
-
-	.box-1 {
 		margin-top: 20px;
-		height: 100px;
+		min-height: 100px;
 		background: #e6a23c;
 		font-size: 30px;
 		text-align: center;
@@ -167,11 +151,25 @@ export default {
 		border-radius: 10px;
 		padding: 10px;
 		width: 400px;
-		overflow: hidden;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		line-height: 80px;
+		word-break: break-all;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.box-1 {
+		min-height: 200px;
+		background: #67c23a;
+		font-size: 30px;
+		text-align: center;
+		color: #ffffff;
+		border-radius: 10px;
+		padding: 10px;
+		width: 400px;
+		word-break: break-all;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

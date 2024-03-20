@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-dialog title="用户管理" center :visible.sync="visible" :append-to-body="true" width="800px" class="user" :close-on-click-modal="false">
+		<el-dialog title="奖项管理" center :visible.sync="visible" :append-to-body="true" width="800px" class="user" :close-on-click-modal="false">
 			<el-row>
 				<el-button size="mini" type="primary" @click="openRewards">配置奖品</el-button>
 				<div class="file-data">

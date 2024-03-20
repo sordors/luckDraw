@@ -99,7 +99,7 @@ export default {
 					} else {
 						this.message = '未抽中奖品';
 					}
-					
+
 					//扣除当前用户积分，如果有用户的情况下
 					if (_this.user && integral > 0 && _this.user.integral >= integral) {
 						let newIntegral = parseInt(_this.user.integral) - parseInt(integral);
@@ -109,7 +109,7 @@ export default {
 						user.integral = newIntegral;
 						this.$store.commit('ADD_USER', user);
 					}
-					
+
 					this.$emit('on-run', this.running);
 				}
 			} else {
@@ -134,19 +134,18 @@ export default {
 		cursor: pointer;
 	}
 	.box {
-		height: 160px;
+		min-height: 200px;
 		background: #67c23a;
 		font-size: 40px;
 		text-align: center;
-		line-height: 140px;
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
 		width: 400px;
-		overflow: hidden;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		word-break: break-all;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

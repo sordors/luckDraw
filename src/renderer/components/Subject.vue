@@ -3,7 +3,7 @@
 		<div class="subject-header">
 			<div class="header-left">
 				<el-button class="user-btn" type="text" @click="chooseUser()">
-					{{ user ? '姓名：' + user.name + ',积分：' + user.integral + '，点击重选' : '选择用户' }}
+					{{ user ? '姓名：' + user.name + '，'+ (config && config.integral_nikcname ? config.integral_nikcname : '积分') +'：' + user.integral + '，点击重选' : '选择用户' }}
 				</el-button>
 			</div>
 			<div class="header-right">

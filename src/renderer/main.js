@@ -32,6 +32,7 @@ db.defaults({
 	config: {
 		"refresh": 1,
 		"rollcall": 1,
+		"integral_nikcname": "积分",
 		"time": 30,
 		"roll_integral": 0,
 		"roll_rate": 100,

@@ -29,6 +29,7 @@ function createWindow() {
 	 */
 	mainWindow = new BrowserWindow({
 		useContentSize: true,
+		icon: "./app.ico",
 		show: false,
 		minWidth: 1300,
 		minHeight: 800,

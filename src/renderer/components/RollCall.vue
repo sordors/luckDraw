@@ -90,19 +90,18 @@ export default {
 		cursor: pointer;
 	}
 	.box {
-		height: 160px;
+		min-height: 200px;
 		background: #e6a23c;
 		font-size: 40px;
 		text-align: center;
-		line-height: 140px;
 		color: #ffffff;
 		border-radius: 10px;
 		padding: 10px;
 		width: 400px;
-		overflow: hidden;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		word-break: break-all;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.running-btn {

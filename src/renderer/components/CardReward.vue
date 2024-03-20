@@ -3,7 +3,7 @@
 		<div class="card-header">
 			<div class="header-left">
 				<el-button class="user-btn" type="text" @click="chooseUser()">
-					{{ user ? '姓名：' + user.name + ',积分：' + user.integral + '，点击重选' : '选择用户' }}
+					{{ user ? '姓名：' + user.name + '，'+ (config && config.integral_nikcname ? config.integral_nikcname : '积分') +'：' + user.integral + '，点击重选' : '选择用户' }}
 				</el-button>
 			</div>
 			<div class="header-right">
@@ -354,7 +354,7 @@ export default {
 								let ballResult = this.user ? this.user.name + '抽中' + reward.name : reward.name;
 								this.$db.get('result.CardReward').push(ballResult).write();
 							}
-							
+
 							if (item.type == 'base') {
 								let ballResult = this.user ? this.user.name + '抽中' + item.reward : item.reward;
 								this.$db.get('result.CardReward').push(ballResult).write();
@@ -438,6 +438,7 @@ export default {
 		right: 15px;
 		height: 37px;
 		cursor: pointer;
+		z-index: 9999;
 	}
 
 	.voice {
@@ -446,6 +447,7 @@ export default {
 		right: 15px;
 		height: 40px;
 		cursor: pointer;
+		z-index: 9999;
 	}
 
 	.card-header {
